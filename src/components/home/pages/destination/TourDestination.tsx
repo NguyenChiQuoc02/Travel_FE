@@ -1,4 +1,5 @@
 "use client";
+import { tourService } from "@/axios/service";
 import React, { useEffect, useState } from "react";
 import Container from "@mui/material/Container";
 import Card from "@mui/material/Card";
@@ -8,8 +9,13 @@ import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
 import Grid from "@mui/material/Grid";
 import Pagination from "@mui/material/Pagination";
-import { tourService } from "@/axios/service";
 import { useRouter } from "next/navigation";
+import { Button } from "@mui/material";
+
+interface TourDestinationProps {
+  desId: number;
+  onBack: () => void;
+}
 
 interface Tour {
   tourId: number;
@@ -27,18 +33,17 @@ interface Tour {
   };
 }
 
-export default function HTour() {
+const TourDestination: React.FC<TourDestinationProps> = ({ desId, onBack }) => {
+  const [page, setPage] = useState<number>(0);
+  const [totalPages, setTotalPages] = useState<number>(0);
   const [tours, setTours] = useState<Tour[]>([]);
-  const [page, setPage] = useState(0);
-  const [totalPages, setTotalPages] = useState(0);
   const router = useRouter();
-
-  const itemsPerPage = 6;
 
   useEffect(() => {
     tourService
-      .fetchTours(page, itemsPerPage)
+      .fetchTourByDestinationId(desId)
       .then((data) => {
+        console.log("check data id tour >>>>", data);
         if (data && data.data.items) {
           setTours(data.data.items);
           console.log(">>>check data>>>", data.data);
@@ -67,6 +72,9 @@ export default function HTour() {
 
   return (
     <Container sx={{ justifyContent: "center", marginTop: 5 }}>
+      <Button variant="contained" color="primary" onClick={onBack}>
+        Trở lại
+      </Button>
       <h1 style={{ textAlign: "center", marginBottom: "20px" }}>
         Danh sách tour hấp dẫn
       </h1>
@@ -109,4 +117,6 @@ export default function HTour() {
       />
     </Container>
   );
-}
+};
+
+export default TourDestination;

@@ -9,7 +9,7 @@ export const fetchDestination = async (
   name?: string
 ) => {
   try {
-    let url = `${API_END_POINT}/home/destination?page=${page || 1}&size=${
+    let url = `${API_END_POINT}/home/destination?page=${page || 0}&size=${
       size || 10
     }`;
 
@@ -30,7 +30,7 @@ export const fetchDestinationById = async (id: number) => {
   try {
     const url = `${API_END_POINT}/home/destination/${id}`;
     const response = await axios.get(url);
-    console.log(response.data);
+    // console.log(response.data);
     return response.data;
   } catch (error) {
     console.error("Error fetching destination by ID:", error);

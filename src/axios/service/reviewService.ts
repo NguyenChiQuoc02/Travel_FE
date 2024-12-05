@@ -20,7 +20,7 @@ export const fetchReviews = async (
   name?: string
 ) => {
   try {
-    let url = `${API_END_POINT}/home/review?page=${page || 1}&size=${
+    let url = `${API_END_POINT}/home/review?page=${page || 0}&size=${
       size || 10
     }`;
 
