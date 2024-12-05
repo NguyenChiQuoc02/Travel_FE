@@ -1,8 +1,5 @@
-
-
 import "./globals.css";
-import { AppRouterCacheProvider } from '@mui/material-nextjs/v15-appRouter';
-
+import { AppRouterCacheProvider } from "@mui/material-nextjs/v15-appRouter";
 
 export default function RootLayout({
   children,
@@ -11,10 +8,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body >
-      <AppRouterCacheProvider  options={{ key: 'css' }}>
-        {children}
-      </AppRouterCacheProvider>
+      <body>
+        <AppRouterCacheProvider options={{ key: "css" }}>
+          {children}
+        </AppRouterCacheProvider>
       </body>
     </html>
   );

@@ -3,7 +3,6 @@ import { login } from "../../../../axios/service/authService";
 import { useRouter } from "next/navigation";
 import { TextField, Button, Typography, Link } from "@mui/material";
 import "./login.scss";
-
 const LoginForm: () => JSX.Element = () => {
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
@@ -17,8 +16,9 @@ const LoginForm: () => JSX.Element = () => {
     try {
       const userData = await login(username, password);
       alert("Đăng nhập thành công!");
+
       if (userData.roles.includes("ROLE_ADMIN")) {
-        router.push("/admin");
+        router.push("/admin/tour");
       } else {
         router.push("/customer");
       }

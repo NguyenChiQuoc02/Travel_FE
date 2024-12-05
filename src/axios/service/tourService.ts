@@ -1,7 +1,7 @@
 import axios from "axios";
 import { API_END_POINT } from "../api";
 
-const token = localStorage.getItem("accessToken");
+const token = localStorage.getItem("accessToken") || "";
 
 export const fetchTourById = async (id: number) => {
   try {
@@ -52,6 +52,81 @@ export const fetchTours = async (
   }
 };
 
+export const fetchToursAdmin = async (
+  page?: number,
+  size?: number,
+  name?: string
+) => {
+  try {
+    let url = `${API_END_POINT}/admin/tour?page=${page || 0}&size=${size || 10}`;
+
+    if (name) {
+      url += `&name=${encodeURIComponent(name)}`;
+    }
+
+    const response = await axios.get(url, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching destinations:", error);
+    return null;
+  }
+};
+
+export const createTour = async (tourData: any, id: number) => {
+  try {
+    const url = `${API_END_POINT}/admin/tour?destinationId=${id}`;
+    const response = await axios.post(url, tourData, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error creating tour:", error);
+    return null;
+  }
+};
+
+export const editTour = async (
+  tourData: any,
+  id: number,
+  destinationId: number
+) => {
+  try {
+    const url = `${API_END_POINT}/admin/tour/${id}?destinationId=${destinationId}`;
+    const response = await axios.put(url, tourData, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error update tour:", error);
+    return null;
+  }
+};
+
+export const deleteTour = async (id: number) => {
+  try {
+    const url = `${API_END_POINT}/admin/tour/${id}`;
+    const response = await axios.delete(url, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error creating tour:", error);
+    return null;
+  }
+};
 // export const searchTour = async (
 //   page?: number,
 //   size?: number,

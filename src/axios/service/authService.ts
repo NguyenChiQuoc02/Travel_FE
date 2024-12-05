@@ -31,7 +31,7 @@ export const login = async (
 
     const { accessToken, tokenType } = response.data;
 
-    localStorage.setItem("accessToken", `${tokenType} ${accessToken}`);
+    localStorage.setItem("accessToken", `${accessToken}`);
 
     return response.data;
   } catch (error) {

@@ -1,19 +1,15 @@
-// SidebarAdmin.tsx (or the relevant file)
-'use client'
+import React from "react";
+import SidebarAdmin from "@/components/admin/SidebarAdmin";
 
-
-import React, { ReactNode } from 'react';
-
-interface SidebarAdminProps {
-  children: ReactNode;
-}
-
-const SidebarAdmin: React.FC<SidebarAdminProps> = ({ children }) => {
+export default function AdminLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
-    <div>
-      <div>{children}</div>
+    <div style={{ display: "flex" }}>
+      <SidebarAdmin />
+      <div style={{ flex: 1, padding: "20px" }}>{children}</div>
     </div>
   );
-};
-
-export default SidebarAdmin;
+}

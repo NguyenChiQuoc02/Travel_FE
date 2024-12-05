@@ -37,3 +37,19 @@ export const fetchDestinationById = async (id: number) => {
     return null;
   }
 };
+
+export const fetchDestinations = async () => {
+  try {
+    const url = `${API_END_POINT}/admin/destination/list`;
+    const response = await axios.get(url, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error get list destination", error);
+    return null;
+  }
+};
