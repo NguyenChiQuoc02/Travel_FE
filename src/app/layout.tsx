@@ -14,5 +14,11 @@ export default function RootLayout({
         </AppRouterCacheProvider>
       </body>
     </html>
+
+    // <div>
+    //   <AppRouterCacheProvider options={{ key: "css" }}>
+    //     {children}
+    //   </AppRouterCacheProvider>
+    // </div>
   );
 }

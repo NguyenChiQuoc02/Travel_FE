@@ -33,7 +33,7 @@ export default function CreateTour() {
   };
 
   const handleSelectChange = (event: SelectChangeEvent<string | number>) => {
-    setDestinationId(Number(event.target.value)); // Ensure the value is a number
+    setDestinationId(Number(event.target.value));
   };
   const handleBack = () => {
     router.push("/admin/tour");

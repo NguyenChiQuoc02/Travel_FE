@@ -1,7 +1,5 @@
-// components/Intro.tsx
 import React from "react";
 import { Box, Container, Typography, Grid, Paper, Button } from "@mui/material";
-import { blue } from "@mui/material/colors";
 
 const destinations = [
   {

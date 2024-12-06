@@ -34,7 +34,7 @@ export default function AdminDestination() {
 
   const itemsPerPage = 6;
 
-  useEffect(() => {
+  const fetchDestination = () => {
     destinationService
       .fetchDestination(page, itemsPerPage)
       .then((data) => {
@@ -49,6 +49,9 @@ export default function AdminDestination() {
       .catch((error) => {
         setDestinations([]);
       });
+  };
+  useEffect(() => {
+    fetchDestination();
   }, [page]);
 
   const handlePageChange = (
@@ -68,16 +71,16 @@ export default function AdminDestination() {
 
   const handleDeleteDestination = (id: number) => {
     if (confirm("Bạn có chắc chắn muốn xóa tour này?")) {
-      // destinationService
-      //   .deleteDestination(id)
-      //   .then(() => {
-      //     alert("Xóa tour thành công!");
-      //     fetchTours();
-      //   })
-      //   .catch((error) => {
-      //     console.error("Error deleting tour:", error);
-      //     alert("Có lỗi xảy ra khi xóa tour.");
-      //   });
+      destinationService
+        .deleteDestination(id)
+        .then(() => {
+          alert("Xóa tour thành công!");
+          fetchDestination();
+        })
+        .catch((error) => {
+          console.error("Error deleting tour:", error);
+          alert("Có lỗi xảy ra khi xóa tour.");
+        });
     }
   };
   return (

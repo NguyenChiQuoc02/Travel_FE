@@ -47,6 +47,7 @@ export default function AdminTour() {
     tourService
       .fetchToursAdmin(page, itemsPerPage)
       .then((data) => {
+        console.log("check>>>", data);
         if (data && data.data.items) {
           setTours(data.data.items);
           setTotalPages(data.data.totalPages);
@@ -101,7 +102,6 @@ export default function AdminTour() {
         Danh sách tour hấp dẫn
       </Typography>
 
-      {/* Nút Thêm */}
       <Stack
         direction="row"
         spacing={2}
@@ -143,7 +143,6 @@ export default function AdminTour() {
                   />
                 </TableCell>
                 <TableCell>
-                  {/* Các nút Hành động */}
                   <Stack direction="row" spacing={1}>
                     <Button
                       variant="outlined"

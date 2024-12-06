@@ -1,8 +1,5 @@
 "use client";
 
-import { bookingService } from "@/axios/service/index";
-import { useEffect } from "react";
-
 interface Booking {
   tourId: number;
   status: string;

@@ -82,7 +82,7 @@ export default function Tour() {
   };
 
   const handleSearch = () => {
-    setPage(1); // Reset về trang đầu tiên khi tìm kiếm
+    setPage(1);
     fetchTours();
   };
 

@@ -1,7 +1,7 @@
 import axios from "axios";
 import { API_END_POINT } from "../api";
 
-const token = localStorage.getItem("accessToken");
+const token = localStorage.getItem("accessToken") || "";
 
 interface BookingParams {
   tourId: number;
@@ -33,6 +33,39 @@ export const createBooking = async (bookingData: BookingParams) => {
 
     return response.data;
   } catch (error) {
-    console.error("Error creating booking:", error);
+    console.log("Error creating booking:", error);
+  }
+};
+
+export const fetchListBooking = async () => {
+  try {
+    const url = `${API_END_POINT}/customer/booking/current-user`;
+    const response = await axios.get(url, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.log("Error get list booking", error);
+    return null;
+  }
+};
+
+export const fetchTotalBooking = async () => {
+  try {
+    const url = `${API_END_POINT}/customer/booking/total/current-user`;
+    const response = await axios.get(url, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+    console.log("check data total", response.data);
+    return response.data;
+  } catch (error) {
+    console.log("Error get total booking", error);
+    return null;
   }
 };

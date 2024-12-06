@@ -7,7 +7,9 @@ import "./SidebarAdmin.scss";
 
 const SidebarAdmin: React.FC = () => {
   const pathname = usePathname();
-
+  const handleLogout = () => {
+    localStorage.removeItem("accessToken");
+  };
   return (
     <div className="sidebar-admin">
       <h2 className="admin-title">Admin</h2>
@@ -46,7 +48,9 @@ const SidebarAdmin: React.FC = () => {
             </Link>
           </li>
           <li>
-            <Link href="/home/login">Đăng xuất</Link>
+            <Link href="/home/login" onClick={handleLogout}>
+              Đăng xuất
+            </Link>
           </li>
         </ul>
       </nav>

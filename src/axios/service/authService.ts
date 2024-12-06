@@ -29,9 +29,10 @@ export const login = async (
       password,
     });
 
-    const { accessToken, tokenType } = response.data;
+    const { accessToken, ...users } = response.data;
 
     localStorage.setItem("accessToken", `${accessToken}`);
+    localStorage.setItem("userInfo", JSON.stringify(users));
 
     return response.data;
   } catch (error) {
@@ -54,7 +55,7 @@ export const register = async (
       phoneNumber: phoneNumber.toString(),
     });
 
-    console.log("Đăng ký thành công! >>> ", response.data);
+    // console.log("Đăng ký thành công! >>> ", response.data);
     return response.data;
   } catch (error) {
     console.error("Đăng ký thất bại:", error);

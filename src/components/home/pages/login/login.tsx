@@ -20,7 +20,7 @@ const LoginForm: () => JSX.Element = () => {
       if (userData.roles.includes("ROLE_ADMIN")) {
         router.push("/admin/tour");
       } else {
-        router.push("/customer");
+        router.push("/home");
       }
     } catch (err) {
       setError("Tên đăng nhập hoặc mật khẩu không chính xác.");

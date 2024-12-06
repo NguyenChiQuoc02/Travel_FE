@@ -1,7 +1,7 @@
 import axios from "axios";
 import { API_END_POINT } from "../api";
 
-const token = localStorage.getItem("accessToken");
+const token = localStorage.getItem("accessToken") || "";
 
 export const fetchDestination = async (
   page?: number,
@@ -21,7 +21,7 @@ export const fetchDestination = async (
     console.log(response.data);
     return response.data;
   } catch (error) {
-    console.error("Error fetching destinations:", error);
+    console.log("Error fetching destinations:", error);
     return null;
   }
 };
@@ -33,7 +33,7 @@ export const fetchDestinationById = async (id: number) => {
     // console.log(response.data);
     return response.data;
   } catch (error) {
-    console.error("Error fetching destination by ID:", error);
+    console.log("Error fetching destination by ID:", error);
     return null;
   }
 };
@@ -49,7 +49,23 @@ export const fetchDestinations = async () => {
     });
     return response.data;
   } catch (error) {
-    console.error("Error get list destination", error);
+    console.log("Error get list destination", error);
+    return null;
+  }
+};
+
+export const deleteDestination = async (id: number) => {
+  try {
+    const url = `${API_END_POINT}/admin/destination/${id}`;
+    const response = await axios.delete(url, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.log("Error creating tour:", error);
     return null;
   }
 };

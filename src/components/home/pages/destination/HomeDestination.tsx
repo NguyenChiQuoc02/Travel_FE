@@ -65,7 +65,6 @@ export default function HDestination() {
   return (
     <>
       {nav ? (
-        // <TourDestination   desId={desId}/>
         <TourDestination desId={desId} onBack={handleBack} />
       ) : (
         <Container sx={{ justifyContent: "center", marginTop: 5 }}>

@@ -9,7 +9,7 @@ export const fetchTourById = async (id: number) => {
     const response = await axios.get(url);
     return response.data;
   } catch (error) {
-    console.error("Error fetching tour by ID:", error);
+    console.log("Error fetching tour by ID:", error);
     return null;
   }
 };
@@ -27,7 +27,7 @@ export const fetchTourByDestinationId = async (
     const response = await axios.get(url);
     return response.data;
   } catch (error) {
-    console.error("Error fetching destinations:", error);
+    console.log("Error fetching destinations:", error);
     return null;
   }
 };
@@ -47,7 +47,7 @@ export const fetchTours = async (
     const response = await axios.get(url);
     return response.data;
   } catch (error) {
-    console.error("Error fetching destinations:", error);
+    console.log("Error fetching destinations:", error);
     return null;
   }
 };
@@ -71,7 +71,7 @@ export const fetchToursAdmin = async (
     });
     return response.data;
   } catch (error) {
-    console.error("Error fetching destinations:", error);
+    console.log("Error fetching destinations:", error);
     return null;
   }
 };
@@ -87,7 +87,7 @@ export const createTour = async (tourData: any, id: number) => {
     });
     return response.data;
   } catch (error) {
-    console.error("Error creating tour:", error);
+    console.log("Error creating tour:", error);
     return null;
   }
 };
@@ -107,7 +107,7 @@ export const editTour = async (
     });
     return response.data;
   } catch (error) {
-    console.error("Error update tour:", error);
+    console.log("Error update tour:", error);
     return null;
   }
 };
@@ -123,7 +123,7 @@ export const deleteTour = async (id: number) => {
     });
     return response.data;
   } catch (error) {
-    console.error("Error creating tour:", error);
+    console.log("Error creating tour:", error);
     return null;
   }
 };
