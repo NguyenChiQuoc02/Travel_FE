@@ -14,6 +14,7 @@ import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
 import { tourService } from "@/axios/service";
 import { useRouter } from "next/navigation";
+import { API_END_POINT } from "@/axios/api";
 
 interface Tour {
   tourId: number;
@@ -133,7 +134,7 @@ export default function AdminTour() {
                 <TableCell>{tour.descriptionTour}</TableCell>
                 <TableCell>
                   <img
-                    src={`http://localhost:8080/image/viewImage/${tour.destination.imageUrl}`}
+                    src={`${API_END_POINT}/image/viewImage/${tour.destination.imageUrl}`}
                     alt={tour.name}
                     style={{ width: "100px", height: "auto" }}
                   />

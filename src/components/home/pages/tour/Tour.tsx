@@ -17,6 +17,7 @@ import FormControl from "@mui/material/FormControl";
 import Box from "@mui/material/Box";
 import { tourService } from "@/axios/service";
 import { useRouter } from "next/navigation";
+import { API_END_POINT } from "@/axios/api";
 
 interface Tour {
   tourId: number;
@@ -150,7 +151,7 @@ export default function Tour() {
                 <CardMedia
                   component="img"
                   height="140"
-                  image={`http://localhost:8080/image/viewImage/${tour.destination.imageUrl}`}
+                  image={`${API_END_POINT}/image/viewImage/${tour.destination.imageUrl}`}
                   alt={tour.name}
                 />
                 <CardContent>

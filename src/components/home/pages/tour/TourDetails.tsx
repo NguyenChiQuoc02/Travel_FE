@@ -14,24 +14,27 @@ import {
 } from "@mui/material";
 import QuickBooking from "./QuickBooking";
 import { useRouter } from "next/navigation";
+import { API_END_POINT } from "@/axios/api";
+import AddReview from "./AddReview";
 const TourDetail: React.FC<{ id: number }> = ({ id }) => {
   const [tour, setTour] = useState<any>(null);
   const [reviews, setReviews] = useState<any[]>([]);
   const [openbook, setOpenBook] = useState<boolean>(false);
+  const [openAddReview, setOpenAddReview] = useState<boolean>(false); // State to control AddReview modal
+
   const router = useRouter();
+  const getTourDetails = async () => {
+    const data = await tourService.fetchTourById(id);
+    setTour(data?.data);
+    const destinationId = data?.data?.destination?.destinationId;
+    if (destinationId) {
+      const reviewsData =
+        await reviewService.fetchReviewByDestinationId(destinationId);
+
+      setReviews(reviewsData.data || []);
+    }
+  };
   useEffect(() => {
-    const getTourDetails = async () => {
-      const data = await tourService.fetchTourById(id);
-      setTour(data?.data);
-      const destinationId = data?.data?.destination?.destinationId;
-      if (destinationId) {
-        const reviewsData =
-          await reviewService.fetchReviewByDestinationId(destinationId);
-
-        setReviews(reviewsData.data || []);
-      }
-    };
-
     getTourDetails();
   }, [id]);
 
@@ -48,7 +51,20 @@ const TourDetail: React.FC<{ id: number }> = ({ id }) => {
   const handleCloseBook = () => {
     setOpenBook(false);
   };
+  const handleAddReview = () => {
+    const storedUsers = localStorage.getItem("userInfo");
+    if (storedUsers && JSON.parse(storedUsers).roles[0] === "ROLE_CUSTOMER") {
+      setOpenAddReview(true);
+    } else {
+      alert("Vui lòng đăng nhập trước đi đánh giá");
+      router.push("/home/login");
+    }
+  };
 
+  const handleCloseAddReview = () => {
+    setOpenAddReview(false);
+    getTourDetails();
+  };
   if (!tour) return <div>Loading...</div>;
 
   return (
@@ -64,7 +80,7 @@ const TourDetail: React.FC<{ id: number }> = ({ id }) => {
                 objectFit: "cover",
                 boxShadow: 3,
               }}
-              image={`http://localhost:8080/image/viewImage/${tour.destination.imageUrl}`}
+              image={`${API_END_POINT}/image/viewImage/${tour.destination.imageUrl}`}
               alt={tour.destination.name}
             />
           </Grid>
@@ -122,6 +138,9 @@ const TourDetail: React.FC<{ id: number }> = ({ id }) => {
         <Typography variant="body1" gutterBottom>
           <strong>Vị trí:</strong> {tour.destination.location}
         </Typography>
+        <Typography>
+          <Button onClick={handleAddReview}>Thêm đánh giá</Button>
+        </Typography>
       </Card>
 
       <Card sx={{ p: 3, backgroundColor: "#ffffff", boxShadow: 3 }}>
@@ -173,6 +192,11 @@ const TourDetail: React.FC<{ id: number }> = ({ id }) => {
         onClose={handleCloseBook}
         price={tour.price}
         tourId={tour.tourId}
+      />
+      <AddReview
+        open={openAddReview}
+        onClose={handleCloseAddReview}
+        destinationId={tour.destination.destinationId}
       />
     </Container>
   );

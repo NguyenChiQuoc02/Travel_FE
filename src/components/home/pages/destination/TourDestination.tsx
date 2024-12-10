@@ -11,6 +11,7 @@ import Grid from "@mui/material/Grid";
 import Pagination from "@mui/material/Pagination";
 import { useRouter } from "next/navigation";
 import { Button } from "@mui/material";
+import { API_END_POINT } from "@/axios/api";
 
 interface TourDestinationProps {
   desId: number;
@@ -86,7 +87,7 @@ const TourDestination: React.FC<TourDestinationProps> = ({ desId, onBack }) => {
                 <CardMedia
                   component="img"
                   height="140"
-                  image={`http://localhost:8080/image/viewImage/${tour.destination.imageUrl}`}
+                  image={`${API_END_POINT}/image/viewImage/${tour.destination.imageUrl}`}
                   alt={tour.name}
                 />
                 <CardContent>
@@ -112,7 +113,7 @@ const TourDestination: React.FC<TourDestinationProps> = ({ desId, onBack }) => {
       <Pagination
         count={totalPages}
         page={page + 1}
-        onChange={(event, value) => handlePageChange(event, value - 1)} // Điều chỉnh để truyền đúng giá trị cho state
+        onChange={(event, value) => handlePageChange(event, value - 1)}
         sx={{ display: "flex", justifyContent: "center", marginTop: 3 }}
       />
     </Container>

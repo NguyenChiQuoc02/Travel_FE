@@ -15,7 +15,8 @@ const AppHeader = () => {
   const router = useRouter();
   const [total, setTotal] = useState<number>(0);
   const [load, setLoad] = useState<boolean>(false);
-  // const storedUsers = localStorage.getItem("userInfo");
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+
   const StyledBadge = styled(Badge)<BadgeProps>(({ theme }) => ({
     "& .MuiBadge-badge": {
       right: -3,
@@ -64,8 +65,12 @@ const AppHeader = () => {
     localStorage.removeItem("userInfo");
     setLoad((prevLoad) => !prevLoad);
     setUser(null);
+    setIsDropdownOpen(false);
   };
 
+  const toggleDropdown = () => {
+    setIsDropdownOpen((prev) => !prev);
+  };
   const gotoCart = () => {
     router.push("/home/cart");
   };
@@ -95,15 +100,28 @@ const AppHeader = () => {
                   <ShoppingCartIcon />
                 </StyledBadge>
               </IconButton>
-              <div className="travel-hi">Xin chào {user.username}</div>
+              <div className="travel-hi" onClick={toggleDropdown}>
+                Xin chào {user.username}
+              </div>
 
-              <Link
-                href="/home/login"
-                onClick={handlelogout}
-                className="travel-hi"
-              >
-                Đăng xuất
-              </Link>
+              {isDropdownOpen && (
+                <div className="dropdown-menu">
+                  <Link
+                    href="/home/profile"
+                    className="dropdown-item"
+                    onClick={() => setIsDropdownOpen(false)}
+                  >
+                    Hồ sơ
+                  </Link>
+                  <Link
+                    href="/home/login"
+                    onClick={handlelogout}
+                    className="dropdown-item"
+                  >
+                    Đăng xuất
+                  </Link>
+                </div>
+              )}
             </div>
           ) : (
             <div className="travel-avatar-hi">

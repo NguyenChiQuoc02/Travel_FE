@@ -20,7 +20,7 @@ export const fetchCategories = async (params: CategoryParams) => {
         size: params.size,
       },
       headers: {
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${localStorage.getItem("accessToken") || ""}`,
       },
     });
     return response.data;

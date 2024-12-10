@@ -3,6 +3,15 @@ import { API_END_POINT } from "../api";
 
 const token = localStorage.getItem("accessToken") || "";
 
+interface Review {
+  destination: {
+    destinationId: number;
+  };
+  rating: number;
+  comment: string;
+  reviewDate: string;
+}
+
 export const fetchReviewByDestinationId = async (id: number) => {
   try {
     const url = `${API_END_POINT}/home/review/destination/${id}`;
@@ -32,6 +41,23 @@ export const fetchReviews = async (
     return response.data;
   } catch (error) {
     console.log("Error fetching reviews:", error);
+    return null;
+  }
+};
+
+export const createReview = async (review: Review) => {
+  try {
+    const url = `${API_END_POINT}/customer/review`;
+    const response = await axios.post(url, review, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+
+    return response.data;
+  } catch (error) {
+    console.log("Error creating review:", error);
     return null;
   }
 };

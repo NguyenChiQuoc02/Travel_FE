@@ -20,11 +20,45 @@ export const fetchUsers = async (params: IUser) => {
         size: params.size,
       },
       headers: {
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${localStorage.getItem("accessToken") || ""}`,
       },
     });
     return response.data;
   } catch (error) {
     console.log("Error fetching categories:", error);
+  }
+};
+
+export const getCurrentUser = async () => {
+  try {
+    const url = `${API_END_POINT}/customer/user/current-user`;
+    const response = await axios.get(url, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+    console.log(response.data);
+    return response.data;
+  } catch (error) {
+    console.log("Error delete user :", error);
+    return null;
+  }
+};
+
+export const deleteUser = async (id: number) => {
+  try {
+    const url = `${API_END_POINT}/admin/user/${id}`;
+    const response = await axios.delete(url, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+    console.log(response.data);
+    return response.data;
+  } catch (error) {
+    console.log("Error delete user :", error);
+    return null;
   }
 };

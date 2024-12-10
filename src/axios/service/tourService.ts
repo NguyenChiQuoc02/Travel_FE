@@ -68,7 +68,7 @@ export const fetchToursAdmin = async (
 
     const response = await axios.get(url, {
       headers: {
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${localStorage.getItem("accessToken") || ""}`,
       },
     });
     return response.data;

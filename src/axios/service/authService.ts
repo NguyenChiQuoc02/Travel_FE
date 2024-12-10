@@ -35,7 +35,6 @@ export const login = async (
     localStorage.setItem("accessToken", `${accessToken}`);
     localStorage.setItem("userAuth", roles.join(" "));
     localStorage.setItem("userInfo", JSON.stringify(users));
-
     return response.data;
   } catch (error) {
     console.error("Đăng nhập thất bại:", error);

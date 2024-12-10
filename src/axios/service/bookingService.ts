@@ -47,7 +47,7 @@ export const fetchListBooking = async () => {
     const url = `${API_END_POINT}/customer/booking/current-user`;
     const response = await axios.get(url, {
       headers: {
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${localStorage.getItem("accessToken") || ""}`,
         "Content-Type": "application/json",
       },
     });
@@ -83,7 +83,7 @@ export const fetchListBookingPage = async (params: IBooking) => {
         size: params.size,
       },
       headers: {
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${localStorage.getItem("accessToken") || ""}`,
       },
     });
     return response.data;

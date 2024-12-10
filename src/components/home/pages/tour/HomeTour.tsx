@@ -10,6 +10,7 @@ import Grid from "@mui/material/Grid";
 import Pagination from "@mui/material/Pagination";
 import { tourService } from "@/axios/service";
 import { useRouter } from "next/navigation";
+import { API_END_POINT } from "@/axios/api";
 
 interface Tour {
   tourId: number;
@@ -78,7 +79,7 @@ export default function HTour() {
                 <CardMedia
                   component="img"
                   height="140"
-                  image={`http://localhost:8080/image/viewImage/${tour.destination.imageUrl}`}
+                  image={`${API_END_POINT}/image/viewImage/${tour.destination.imageUrl}`}
                   alt={tour.name}
                 />
                 <CardContent>
@@ -104,7 +105,7 @@ export default function HTour() {
       <Pagination
         count={totalPages}
         page={page + 1}
-        onChange={(event, value) => handlePageChange(event, value - 1)} // Điều chỉnh để truyền đúng giá trị cho state
+        onChange={(event, value) => handlePageChange(event, value - 1)}
         sx={{ display: "flex", justifyContent: "center", marginTop: 3 }}
       />
     </Container>

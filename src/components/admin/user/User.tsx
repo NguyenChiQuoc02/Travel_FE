@@ -9,7 +9,6 @@ import {
   Paper,
   Typography,
   Container,
-  Stack,
   Button,
   Pagination,
 } from "@mui/material";
@@ -26,7 +25,7 @@ interface User {
   email: string;
   phoneNumber: string;
   roles: Role[];
-  delete: boolean;
+  deleted: boolean;
 }
 
 const UserTable: React.FC = () => {
@@ -35,7 +34,6 @@ const UserTable: React.FC = () => {
   const [totalPages, setTotalPages] = useState(0);
   const itemsPerPage = 6;
 
-  // Fetch user data
   const fetchUsers = () => {
     userService
       .fetchUsers({ page: page, size: itemsPerPage })
@@ -58,12 +56,25 @@ const UserTable: React.FC = () => {
     fetchUsers();
   }, [page]);
 
-  const handleDeleteUser = (id: number) => {};
+  const handleDeleteUser = (id: number) => {
+    if (confirm("Bạn có chắc chắn muốn xóa tour này?")) {
+      userService
+        .deleteUser(id)
+        .then(() => {
+          alert("Xóa user thành công!");
+          fetchUsers();
+        })
+        .catch((error) => {
+          console.error("Error deleting user:", error);
+          alert("Có lỗi xảy ra khi xóa user.");
+        });
+    }
+  };
   const handlePageChange = (
     event: React.ChangeEvent<unknown>,
     value: number
   ) => {
-    setPage(value - 1); // Điều chỉnh để phù hợp với index từ 0
+    setPage(value - 1);
   };
 
   return (
@@ -97,12 +108,13 @@ const UserTable: React.FC = () => {
                   {user.roles.map((role) => role.name).join(", ")}
                 </TableCell>
                 <TableCell align="center">
-                  {user.delete ? "Đã xóa" : "Đang dùng"}
+                  {user.deleted ? "Đã xóa" : "Đang dùng"}
                 </TableCell>
                 <TableCell align="center">
                   <Button
                     variant="outlined"
                     color="error"
+                    disabled={user.deleted}
                     onClick={() => handleDeleteUser(user.userId)}
                   >
                     Xóa

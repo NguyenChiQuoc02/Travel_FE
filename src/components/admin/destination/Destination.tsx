@@ -16,6 +16,7 @@ import {
   Stack,
   Button,
 } from "@mui/material";
+import { API_END_POINT } from "@/axios/api";
 
 export default function AdminDestination() {
   const [destinations, setDestinations] = useState<Destination[]>([]);
@@ -126,7 +127,7 @@ export default function AdminDestination() {
                   <TableCell align="center">{destination.location}</TableCell>
                   <TableCell align="center">
                     <img
-                      src={`http://localhost:8080/image/viewImage/${destination.imageUrl}`}
+                      src={`${API_END_POINT}/image/viewImage/${destination.imageUrl}`}
                       alt={destination.name}
                       style={{ width: "100px", height: "auto" }}
                     />

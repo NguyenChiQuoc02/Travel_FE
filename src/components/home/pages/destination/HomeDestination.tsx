@@ -12,6 +12,7 @@ import Pagination from "@mui/material/Pagination";
 import { destinationService, tourService } from "@/axios/service";
 import { useRouter } from "next/navigation";
 import TourDestination from "./TourDestination";
+import { API_END_POINT } from "@/axios/api";
 
 export default function HDestination() {
   const [destinations, setDestinations] = useState<Destination[]>([]);
@@ -79,7 +80,7 @@ export default function HDestination() {
                     <CardMedia
                       component="img"
                       height="140"
-                      image={`http://localhost:8080/image/viewImage/${destination.imageUrl}`}
+                      image={`${API_END_POINT}/image/viewImage/${destination.imageUrl}`}
                       alt={destination.name}
                       onClick={() => handleNavigate(destination.destinationId)}
                     />
