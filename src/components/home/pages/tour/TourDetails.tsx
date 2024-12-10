@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { bookingService, tourService } from "@/axios/service/index";
+import { tourService } from "@/axios/service/index";
 import { reviewService } from "@/axios/service/index";
 import Grid from "@mui/material/Grid";
 import {

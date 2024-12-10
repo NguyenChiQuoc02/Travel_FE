@@ -8,6 +8,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
+import { useMutation } from "react-query";
 import { bookingService } from "@/axios/service/index";
 
 interface QuickBookingProps {
@@ -24,11 +25,9 @@ const QuickBooking: React.FC<QuickBookingProps> = ({
   tourId,
 }) => {
   const [amount, setAmount] = useState<number>(1);
-  const [loading, setLoading] = useState<boolean>(false);
 
-  const handleBooking = async () => {
-    setLoading(true);
-    try {
+  const { mutate, isLoading } = useMutation({
+    mutationFn: async () => {
       await bookingService.createBooking({
         tourId,
         status: "CONFIRMED",
@@ -36,14 +35,19 @@ const QuickBooking: React.FC<QuickBookingProps> = ({
         paymentMethod: "CASH",
         paymentStatus: "SUCCESS",
       });
+    },
+    onSuccess: () => {
       alert("Đặt thành công!");
       onClose();
-    } catch (error) {
+    },
+    onError: (error) => {
       console.error("Booking failed", error);
       alert("Đặt thất bại, vui lòng thử lại");
-    } finally {
-      setLoading(false);
-    }
+    },
+  });
+
+  const handleBooking = () => {
+    mutate();
   };
 
   return (
@@ -66,16 +70,16 @@ const QuickBooking: React.FC<QuickBookingProps> = ({
         </Typography>
       </DialogContent>
       <DialogActions>
-        <Button onClick={onClose} color="secondary" disabled={loading}>
+        <Button onClick={onClose} color="secondary" disabled={isLoading}>
           Hủy
         </Button>
         <Button
           onClick={handleBooking}
           variant="contained"
           color="primary"
-          disabled={loading}
+          disabled={isLoading}
         >
-          {loading ? "Đang đặt..." : "Đặt đơn"}
+          {isLoading ? "Đang đặt..." : "Đặt đơn"}
         </Button>
       </DialogActions>
     </Dialog>

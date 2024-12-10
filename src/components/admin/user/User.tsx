@@ -26,6 +26,7 @@ interface User {
   email: string;
   phoneNumber: string;
   roles: Role[];
+  delete: boolean;
 }
 
 const UserTable: React.FC = () => {
@@ -57,6 +58,7 @@ const UserTable: React.FC = () => {
     fetchUsers();
   }, [page]);
 
+  const handleDeleteUser = (id: number) => {};
   const handlePageChange = (
     event: React.ChangeEvent<unknown>,
     value: number
@@ -78,6 +80,8 @@ const UserTable: React.FC = () => {
               <TableCell align="center">Email</TableCell>
               <TableCell align="center">Số Điện Thoại</TableCell>
               <TableCell align="center">Quyền</TableCell>
+              <TableCell align="center">Trạng thái</TableCell>
+              <TableCell align="center"></TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -91,6 +95,18 @@ const UserTable: React.FC = () => {
                 <TableCell align="center">{user.phoneNumber}</TableCell>
                 <TableCell align="center">
                   {user.roles.map((role) => role.name).join(", ")}
+                </TableCell>
+                <TableCell align="center">
+                  {user.delete ? "Đã xóa" : "Đang dùng"}
+                </TableCell>
+                <TableCell align="center">
+                  <Button
+                    variant="outlined"
+                    color="error"
+                    onClick={() => handleDeleteUser(user.userId)}
+                  >
+                    Xóa
+                  </Button>
                 </TableCell>
               </TableRow>
             ))}

@@ -10,6 +10,7 @@ import {
   Grid,
   Divider,
 } from "@mui/material";
+import { useFormContext } from "react-hook-form";
 import { API_END_POINT } from "@/axios/api";
 
 interface BookingDetailsModalProps {
@@ -23,6 +24,8 @@ const BookingDetailsModal: React.FC<BookingDetailsModalProps> = ({
   bookingDetails,
   handleClose,
 }) => {
+  const { watch } = useFormContext();
+
   return (
     <Dialog open={open} onClose={handleClose} maxWidth="md" fullWidth>
       <DialogTitle
@@ -41,38 +44,47 @@ const BookingDetailsModal: React.FC<BookingDetailsModalProps> = ({
             <Grid container spacing={2}>
               <Grid item xs={12} sm={6}>
                 <Typography variant="h6" color="textSecondary">
-                  <strong>ID Đặt Tour:</strong> {bookingDetails.bookingId}
+                  <strong>ID Đặt Tour:</strong>{" "}
+                  {watch("bookingDetails.bookingId")}
                 </Typography>
                 <Typography variant="body1" color="textSecondary">
-                  <strong>Người Dùng:</strong> {bookingDetails.user.name} -{" "}
-                  {bookingDetails.user.email}
+                  <strong>Người Dùng:</strong>{" "}
+                  {watch("bookingDetails.user.name")} -{" "}
+                  {watch("bookingDetails.user.email")}
+                </Typography>
+
+                <Typography variant="body1" color="textSecondary">
+                  <strong>Ngày Đặt:</strong>{" "}
+                  {watch("bookingDetails.bookingDate")}
                 </Typography>
                 <Typography variant="body1" color="textSecondary">
-                  <strong>Tour:</strong> {bookingDetails.tour.name}
+                  <strong>Số lượng:</strong> {watch("bookingDetails.amount")}
                 </Typography>
                 <Typography variant="body1" color="textSecondary">
-                  <strong>Ngày Đặt:</strong> {bookingDetails.bookingDate}
+                  <strong>Giá:</strong> {watch("bookingDetails.tour.price")} VND
                 </Typography>
-                <Typography variant="body1" color="textSecondary">
-                  <strong>Số lượng:</strong> {bookingDetails.amount}
-                </Typography>
+
                 <Typography variant="body1" color="textSecondary">
                   <strong>Trạng Thái Thanh Toán:</strong>{" "}
-                  {bookingDetails.paymentStatus}
+                  {watch("bookingDetails.paymentStatus")}
                 </Typography>
                 <Typography variant="body1" color="textSecondary">
-                  <strong>Ngày Thanh Toán:</strong> {bookingDetails.paymentDate}
+                  <strong>Ngày Thanh Toán:</strong>{" "}
+                  {watch("bookingDetails.paymentDate")}
                 </Typography>
                 <Typography variant="body1" color="textSecondary">
                   <strong>Phương Thức Thanh Toán:</strong>{" "}
-                  {bookingDetails.paymentMethod}
+                  {watch("bookingDetails.paymentMethod")}
+                </Typography>
+                <Typography variant="body1" color="textSecondary">
+                  <strong>Tour:</strong> {watch("bookingDetails.tour.name")}
                 </Typography>
               </Grid>
 
               <Grid item xs={12} sm={6}>
                 <img
-                  src={`${API_END_POINT}/image/viewImage/${bookingDetails.tour.destination.imageUrl}`}
-                  alt={bookingDetails.tour.name}
+                  src={`${API_END_POINT}/image/viewImage/${watch("bookingDetails.tour.destination.imageUrl")}`}
+                  alt={watch("bookingDetails.tour.name")}
                   style={{
                     width: "100%",
                     height: "auto",
@@ -84,27 +96,24 @@ const BookingDetailsModal: React.FC<BookingDetailsModalProps> = ({
             </Grid>
             <Divider sx={{ margin: "20px 0" }} />
             <Typography variant="body1" color="textSecondary">
-              <strong>Ngày Khởi Hành:</strong> {bookingDetails.tour.startDate}
+              <strong>Ngày Khởi Hành:</strong>{" "}
+              {watch("bookingDetails.tour.startDate")}
             </Typography>
             <Typography variant="body1" color="textSecondary">
-              <strong>Ngày Kết Thúc:</strong> {bookingDetails.tour.endDate}
+              <strong>Ngày Kết Thúc:</strong>{" "}
+              {watch("bookingDetails.tour.endDate")}
+            </Typography>
+            <Typography variant="body1" color="textSecondary" fontSize={22}>
+              <strong>Tổng:</strong>{" "}
+              {watch("bookingDetails.tour.price") *
+                watch("bookingDetails.amount")}{" "}
+              VND
             </Typography>
           </Box>
         )}
       </DialogContent>
-      <DialogActions sx={{ padding: "10px 20px" }}>
-        <Button
-          onClick={handleClose}
-          color="primary"
-          variant="contained"
-          sx={{
-            backgroundColor: "#1976d2",
-            color: "#fff",
-            "&:hover": {
-              backgroundColor: "#1565c0",
-            },
-          }}
-        >
+      <DialogActions>
+        <Button onClick={handleClose} color="primary">
           Đóng
         </Button>
       </DialogActions>

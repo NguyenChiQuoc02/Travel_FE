@@ -15,8 +15,10 @@ import {
   Pagination,
 } from "@mui/material";
 import BookingDetailsModal from "./BookingDetail";
+import { useFormContext } from "react-hook-form";
 
 const BookingList: React.FC = () => {
+  const { setValue } = useFormContext();
   const [bookings, setBookings] = useState<any[]>([]);
   const [page, setPage] = useState<number>(0);
   const [totalPages, setTotalPages] = useState<number>(1);
@@ -42,6 +44,7 @@ const BookingList: React.FC = () => {
       if (data && data.data) {
         setBookingDetails(data.data);
         setOpen(true);
+        setValue("bookingDetails", data.data);
       }
     } catch (error) {
       console.error("Error fetching booking details:", error);
@@ -79,7 +82,7 @@ const BookingList: React.FC = () => {
           <TableHead>
             <TableRow>
               <TableCell align="center">ID</TableCell>
-              <TableCell align="center">Tên Người Dùng</TableCell>
+              <TableCell align="center">Tên khách hàng</TableCell>
               <TableCell align="center">Tour</TableCell>
               <TableCell align="center">Ngày Đặt</TableCell>
               <TableCell align="center">Số lượng</TableCell>

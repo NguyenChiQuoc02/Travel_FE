@@ -3,7 +3,9 @@ import React from "react";
 import SidebarAdmin from "@/components/admin/SidebarAdmin";
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { QueryClient, QueryClientProvider } from "react-query";
 
+const queryClient = new QueryClient();
 export default function AdminLayout({
   children,
 }: {
@@ -19,8 +21,10 @@ export default function AdminLayout({
   }, [router]);
   return (
     <div style={{ display: "flex" }}>
-      <SidebarAdmin />
-      <div style={{ flex: 1, padding: "20px" }}>{children}</div>
+      <QueryClientProvider client={queryClient}>
+        <SidebarAdmin />
+        <div style={{ flex: 1, padding: "20px" }}>{children}</div>
+      </QueryClientProvider>
     </div>
   );
 }
