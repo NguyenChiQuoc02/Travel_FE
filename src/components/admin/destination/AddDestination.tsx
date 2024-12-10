@@ -1,7 +1,4 @@
 import React, { useState } from "react";
-import axios from "axios";
-import { API_END_POINT } from "@/axios/api";
-import { useRouter } from "next/navigation";
 import {
   Box,
   Button,
@@ -11,17 +8,20 @@ import {
   Card,
   CardMedia,
 } from "@mui/material";
+import { useRouter } from "next/navigation";
+import { destinationService } from "@/axios/service";
+import { useForm, Controller } from "react-hook-form";
 
 const CreateDestination = () => {
-  const [name, setName] = useState("");
-  const [description, setDescription] = useState("");
-  const [location, setLocation] = useState("");
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
   const [message, setMessage] = useState("");
   const router = useRouter();
-
-  const token = localStorage.getItem("accessToken") || "";
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files?.[0] || null;
@@ -33,37 +33,24 @@ const CreateDestination = () => {
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
+  const onSubmit = async (data: any) => {
     if (!file) {
       setMessage("Vui lòng chọn file ảnh!");
       return;
     }
 
-    const formData = new FormData();
-    formData.append("file", file);
-    formData.append("name", name);
-    formData.append("description", description);
-    formData.append("location", location);
-
     try {
-      const response = await axios.post(
-        `${API_END_POINT}/admin/destination`,
-        formData,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "multipart/form-data",
-          },
-        }
+      await destinationService.createDestination(
+        data.name,
+        data.description,
+        data.location,
+        file
       );
-
       alert("Tạo điểm đến thành công!");
       router.push("/admin/destination");
     } catch (error) {
-      console.error("Error creating destination:", error);
-      alert("Có lỗi xảy ra khi tạo điểm đến!");
+      console.error("Có lỗi khi tạo điểm đến:", error);
+      setMessage("Có lỗi xảy ra khi tạo điểm đến!");
     }
   };
 
@@ -81,39 +68,59 @@ const CreateDestination = () => {
       <Typography variant="h4" gutterBottom>
         Tạo điểm đến
       </Typography>
-      <form onSubmit={handleSubmit}>
-        <TextField
-          fullWidth
-          label="Tên"
-          variant="outlined"
-          margin="normal"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          required
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <Controller
+          name="name"
+          control={control}
+          defaultValue=""
+          rules={{ required: "Tên là bắt buộc" }}
+          render={({ field }) => (
+            <TextField
+              {...field}
+              fullWidth
+              label="Tên"
+              variant="outlined"
+              margin="normal"
+              error={!!errors.name}
+            />
+          )}
         />
-        <TextareaAutosize
-          minRows={4}
-          placeholder="Mô tả"
-          style={{
-            width: "100%",
-            padding: 8,
-            marginTop: 16,
-            fontSize: "16px",
-            borderRadius: 4,
-            borderColor: "#ccc",
-          }}
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-          required
+        <Controller
+          name="description"
+          control={control}
+          defaultValue=""
+          rules={{ required: "Mô tả là bắt buộc" }}
+          render={({ field }) => (
+            <TextareaAutosize
+              {...field}
+              minRows={4}
+              placeholder="Mô tả"
+              style={{
+                width: "100%",
+                padding: 8,
+                marginTop: 16,
+                fontSize: "16px",
+                borderRadius: 4,
+                borderColor: "#ccc",
+              }}
+            />
+          )}
         />
-        <TextField
-          fullWidth
-          label="Địa điểm"
-          variant="outlined"
-          margin="normal"
-          value={location}
-          onChange={(e) => setLocation(e.target.value)}
-          required
+        <Controller
+          name="location"
+          control={control}
+          defaultValue=""
+          rules={{ required: "Địa điểm là bắt buộc" }}
+          render={({ field }) => (
+            <TextField
+              {...field}
+              fullWidth
+              label="Địa điểm"
+              variant="outlined"
+              margin="normal"
+              error={!!errors.location}
+            />
+          )}
         />
         <Button
           variant="contained"

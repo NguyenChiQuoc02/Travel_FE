@@ -9,6 +9,8 @@ const SidebarAdmin: React.FC = () => {
   const pathname = usePathname();
   const handleLogout = () => {
     localStorage.removeItem("accessToken");
+    localStorage.removeItem("userInfo");
+    localStorage.removeItem("userAuth");
   };
   return (
     <div className="sidebar-admin">
@@ -33,10 +35,10 @@ const SidebarAdmin: React.FC = () => {
           </li>
           <li>
             <Link
-              href="/admin/review"
-              className={pathname === "/admin/review" ? "active" : ""}
+              href="/admin/user"
+              className={pathname === "/admin/user" ? "active" : ""}
             >
-              Đánh giá
+              Khách hàng
             </Link>
           </li>
           <li>

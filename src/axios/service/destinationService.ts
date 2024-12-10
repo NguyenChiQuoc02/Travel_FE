@@ -54,6 +54,67 @@ export const fetchDestinations = async () => {
   }
 };
 
+export const createDestination = async (
+  name: string,
+  description: string,
+  location: string,
+  file: File
+) => {
+  const formData = new FormData();
+  formData.append("file", file);
+  formData.append("name", name);
+  formData.append("description", description);
+  formData.append("location", location);
+
+  try {
+    const response = await axios.post(
+      `${API_END_POINT}/admin/destination`,
+      formData,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Có lỗi khi tạo điểm đến:", error);
+    throw error;
+  }
+};
+
+export const editDestination = async (
+  id: string,
+  name: string,
+  description: string,
+  location: string,
+  file: File
+) => {
+  const formData = new FormData();
+  formData.append("file", file);
+  formData.append("name", name);
+  formData.append("description", description);
+  formData.append("location", location);
+
+  try {
+    const response = await axios.put(
+      `${API_END_POINT}/admin/destination/${id}`,
+      formData,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Có lỗi khi sua điểm đến:", error);
+    throw error;
+  }
+};
+
 export const deleteDestination = async (id: number) => {
   try {
     const url = `${API_END_POINT}/admin/destination/${id}`;

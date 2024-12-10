@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
 import { bookingService } from "@/axios/service/index";
 import {
   Container,
@@ -81,7 +80,9 @@ const BookingList: React.FC = () => {
                 <TableCell>{index + 1}</TableCell>
                 <TableCell>{booking.tour.name}</TableCell>
                 <TableCell>{booking.tour.destination.name}</TableCell>
-                <TableCell>{booking.tour.price.toLocaleString()}</TableCell>
+                <TableCell>
+                  {(booking.tour.price * booking.amount).toLocaleString()}
+                </TableCell>
                 <TableCell>{booking.status}</TableCell>
                 <TableCell>{booking.paymentStatus}</TableCell>
                 <TableCell>

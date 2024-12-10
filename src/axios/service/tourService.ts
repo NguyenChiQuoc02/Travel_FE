@@ -1,7 +1,9 @@
 import axios from "axios";
 import { API_END_POINT } from "../api";
 
-const token = localStorage.getItem("accessToken") || "";
+// localStorage.setItem("userAuth", `ROLE_GUEST`);
+
+const token = localStorage.getItem("accessToken");
 
 export const fetchTourById = async (id: number) => {
   try {

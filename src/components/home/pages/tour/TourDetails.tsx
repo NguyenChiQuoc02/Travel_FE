@@ -10,16 +10,15 @@ import {
   Container,
   Button,
   Box,
-  Divider,
   Rating,
 } from "@mui/material";
 import QuickBooking from "./QuickBooking";
-
+import { useRouter } from "next/navigation";
 const TourDetail: React.FC<{ id: number }> = ({ id }) => {
   const [tour, setTour] = useState<any>(null);
   const [reviews, setReviews] = useState<any[]>([]);
   const [openbook, setOpenBook] = useState<boolean>(false);
-
+  const router = useRouter();
   useEffect(() => {
     const getTourDetails = async () => {
       const data = await tourService.fetchTourById(id);
@@ -37,7 +36,13 @@ const TourDetail: React.FC<{ id: number }> = ({ id }) => {
   }, [id]);
 
   const handleOpenBook = () => {
-    setOpenBook(true);
+    const storedUsers = localStorage.getItem("userInfo");
+    if (storedUsers && JSON.parse(storedUsers).roles[0] === "ROLE_CUSTOMER") {
+      setOpenBook(true);
+    } else {
+      alert("Vui lòng đăng nhập trước đi đặt tour");
+      router.push("/home/login");
+    }
   };
 
   const handleCloseBook = () => {

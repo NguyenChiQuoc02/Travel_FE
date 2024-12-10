@@ -69,10 +69,6 @@ export default function AdminTour() {
     setPage(value);
   };
 
-  const handleNavigate = (id: number) => {
-    router.push(`/home/tour/${id}`);
-  };
-
   const handleAddTour = () => {
     router.push("/admin/tour/add");
   };

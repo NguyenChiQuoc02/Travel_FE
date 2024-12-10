@@ -30,8 +30,10 @@ export const login = async (
     });
 
     const { accessToken, ...users } = response.data;
+    const { roles } = response.data;
 
     localStorage.setItem("accessToken", `${accessToken}`);
+    localStorage.setItem("userAuth", roles.join(" "));
     localStorage.setItem("userInfo", JSON.stringify(users));
 
     return response.data;

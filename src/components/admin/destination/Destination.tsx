@@ -2,7 +2,6 @@
 import React, { useEffect, useState } from "react";
 import Container from "@mui/material/Container";
 import Typography from "@mui/material/Typography";
-import Grid from "@mui/material/Grid";
 import Pagination from "@mui/material/Pagination";
 import { destinationService } from "@/axios/service";
 import { useRouter } from "next/navigation";
@@ -74,7 +73,7 @@ export default function AdminDestination() {
       destinationService
         .deleteDestination(id)
         .then(() => {
-          alert("Xóa tour thành công!");
+          alert("Xóa địa điểm thành công!");
           fetchDestination();
         })
         .catch((error) => {

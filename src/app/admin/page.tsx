@@ -1,12 +1,17 @@
-'user client'
+"use client";
 
-import Button from '@mui/material/Button';
-const Admin = () =>{
+import Image from "next/image";
+const Admin = () => {
   return (
     <div>
-      <Button variant="contained">Hello world</Button>
+      <Image
+        src="/images/welcomeHCM.jpg"
+        width={1500}
+        height={800}
+        alt="Danang"
+      />
     </div>
-  )
-}
+  );
+};
 
 export default Admin;

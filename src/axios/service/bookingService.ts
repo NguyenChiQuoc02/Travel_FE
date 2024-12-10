@@ -11,6 +11,11 @@ interface BookingParams {
   paymentStatus: string;
 }
 
+interface IBooking {
+  page: number;
+  size: number;
+}
+
 export const createBooking = async (bookingData: BookingParams) => {
   try {
     const response = await axios.post(
@@ -67,5 +72,35 @@ export const fetchTotalBooking = async () => {
   } catch (error) {
     console.log("Error get total booking", error);
     return null;
+  }
+};
+
+export const fetchListBookingPage = async (params: IBooking) => {
+  try {
+    const response = await axios.get(`${API_END_POINT}/admin/booking`, {
+      params: {
+        page: params.page,
+        size: params.size,
+      },
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.log("Error fetching booking:", error);
+  }
+};
+
+export const fetchBookingById = async (id: number) => {
+  try {
+    const response = await axios.get(`${API_END_POINT}/admin/booking/${id}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.log("Error fetching booking by id:", error);
   }
 };

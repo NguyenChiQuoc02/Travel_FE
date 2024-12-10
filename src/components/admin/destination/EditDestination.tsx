@@ -1,8 +1,15 @@
-"use client";
 import React, { useEffect, useState } from "react";
-import { Button, TextField, Container, Typography, Stack } from "@mui/material";
-import axios from "axios";
-import { useRouter, useParams } from "next/navigation";
+import {
+  Button,
+  TextField,
+  Container,
+  Typography,
+  Stack,
+  Card,
+  CardMedia,
+} from "@mui/material";
+import { useRouter } from "next/navigation";
+import { destinationService } from "@/axios/service/index";
 import { API_END_POINT } from "@/axios/api";
 
 export const EditDestination: React.FC<{ id: number }> = ({ id }) => {
@@ -10,45 +17,51 @@ export const EditDestination: React.FC<{ id: number }> = ({ id }) => {
   const [description, setDescription] = useState("");
   const [location, setLocation] = useState("");
   const [file, setFile] = useState<File | null>(null);
+  const [preview, setPreview] = useState<string | null>(null);
   const router = useRouter();
 
   useEffect(() => {
-    axios
-      .get(`${API_END_POINT}/admin/destination/${id}`)
-      .then((response) => {
-        const { name, description, location } = response.data;
-        setName(name);
-        setDescription(description);
-        setLocation(location);
-      })
-      .catch((error) => {
-        console.error("Error fetching destination:", error);
-        alert("Có lỗi xảy ra khi tải dữ liệu điểm đến!");
-      });
+    if (id) {
+      destinationService
+        .fetchDestinationById(id)
+        .then((response) => {
+          const { name, description, imageUrl, location } = response.data;
+          setName(name);
+          setDescription(description);
+          setLocation(location);
+          setPreview(`${API_END_POINT}/image/viewImage/${imageUrl}`);
+        })
+        .catch((error) => {
+          console.error("Error fetching destination:", error);
+          alert("Có lỗi xảy ra khi tải dữ liệu điểm đến!");
+        });
+    }
   }, [id]);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files?.[0] || null;
     setFile(selectedFile);
+    if (selectedFile) {
+      const objectUrl = URL.createObjectURL(selectedFile);
+      setPreview(objectUrl);
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    const formData = new FormData();
-    formData.append("name", name);
-    formData.append("description", description);
-    formData.append("location", location);
-    if (file) {
-      formData.append("file", file);
-    }
-
     try {
-      await axios.put(`${API_END_POINT}/admin/destination/${id}`, formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
+      if (!name || !description || !location) {
+        alert("Vui lòng điền đầy đủ thông tin!");
+        return;
+      }
+
+      await destinationService.editDestination(
+        id.toString(),
+        name,
+        description,
+        location,
+        file!
+      );
 
       alert("Cập nhật điểm đến thành công!");
       router.push("/admin/destination");
@@ -97,6 +110,16 @@ export const EditDestination: React.FC<{ id: number }> = ({ id }) => {
               onChange={handleFileChange}
             />
           </Button>
+          {preview && (
+            <Card sx={{ maxWidth: "100%", mt: 2 }}>
+              <CardMedia
+                component="img"
+                height="300"
+                image={preview}
+                alt="Preview"
+              />
+            </Card>
+          )}
           <Button type="submit" variant="contained" color="primary" fullWidth>
             Cập Nhật
           </Button>

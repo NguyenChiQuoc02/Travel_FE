@@ -9,11 +9,13 @@ import IconButton from "@mui/material/IconButton";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import { useRouter } from "next/navigation";
 import { bookingService } from "@/axios/service/index";
+
 const AppHeader = () => {
   const [user, setUser] = useState<{ username: string } | null>(null);
   const router = useRouter();
   const [total, setTotal] = useState<number>(0);
-  const storedUsers = localStorage.getItem("userInfo");
+  const [load, setLoad] = useState<boolean>(false);
+  // const storedUsers = localStorage.getItem("userInfo");
   const StyledBadge = styled(Badge)<BadgeProps>(({ theme }) => ({
     "& .MuiBadge-badge": {
       right: -3,
@@ -24,26 +26,44 @@ const AppHeader = () => {
   }));
 
   useEffect(() => {
-    if (storedUsers && JSON.parse(storedUsers).roles[0] == "ROLE_CUSTOMER") {
-      setUser(JSON.parse(storedUsers));
-    }
+    const updateUser = () => {
+      const storedUsers = localStorage.getItem("userInfo");
+      if (storedUsers && JSON.parse(storedUsers).roles[0] === "ROLE_CUSTOMER") {
+        setUser(JSON.parse(storedUsers));
+      } else {
+        setUser(null);
+      }
+    };
+
+    window.addEventListener("storage", updateUser);
+
+    updateUser();
+
+    return () => {
+      window.removeEventListener("storage", updateUser);
+    };
   }, []);
 
   useEffect(() => {
     const fetchTotal = async () => {
-      const response = await bookingService.fetchTotalBooking();
-
-      if (response) {
-        const data = parseInt(response.data, 10);
-        setTotal(data);
+      if (user) {
+        const response = await bookingService.fetchTotalBooking();
+        if (response) {
+          const data = parseInt(response.data, 10);
+          setTotal(data);
+        }
+      } else {
+        setTotal(0);
       }
     };
     fetchTotal();
-  }, []);
+  }, [user]);
 
   const handlelogout = () => {
     localStorage.removeItem("accessToken");
     localStorage.removeItem("userInfo");
+    setLoad((prevLoad) => !prevLoad);
+    setUser(null);
   };
 
   const gotoCart = () => {
