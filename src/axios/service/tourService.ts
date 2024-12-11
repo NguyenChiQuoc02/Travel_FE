@@ -22,7 +22,7 @@ export const fetchTourByDestinationId = async (
   size?: number
 ) => {
   try {
-    let url = `${API_END_POINT}/home/tour/destination/${id}?page=${
+    const url = `${API_END_POINT}/home/tour/destination/${id}?page=${
       page || 0
     }&size=${size || 10}`;
 

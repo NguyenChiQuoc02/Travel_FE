@@ -174,7 +174,6 @@ export default function Tour() {
         ))}
       </Grid>
 
-      {/* Pagination */}
       {totalPages > 1 && (
         <Pagination
           count={totalPages}
