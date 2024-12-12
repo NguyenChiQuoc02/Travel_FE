@@ -17,10 +17,13 @@ import Select, { SelectChangeEvent } from "@mui/material/Select";
 import { useMutation } from "@tanstack/react-query";
 import { ChangeTour } from "@/axios/data.type/tour";
 import { Destination } from "@/axios/data.type/destination";
+import ToastMessage from "@/components/shared/Inform/toastMessage";
 
 export default function CreateTour() {
-  const [destinationId, setDestinationId] = useState<number>(5);
+  const [destinationId, setDestinationId] = useState<number>(1);
   const [destinations, setDestinations] = useState<Destination[]>([]);
+  const [toastOpen, setToastOpen] = useState<boolean>(false);
+  const [toastMessage, setToastMessage] = useState<string>("");
   const [tourData, setTourData] = useState({
     name: "",
     price: 0,
@@ -55,13 +58,39 @@ export default function CreateTour() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!tourData.name.trim()) {
+      setToastMessage("Tên Tour không để trống");
+      setToastOpen(true);
+      return;
+    }
+    if (tourData.price <= 0) {
+      setToastMessage("Giá Tour phải lớn hơn 0.");
+      setToastOpen(true);
+      return;
+    }
+    if (!tourData.startDate || !tourData.endDate) {
+      setToastMessage("Ngày bắt đầu và ngày kết thúc là bắt buộc.");
+      setToastOpen(true);
+      return;
+    }
+    if (new Date(tourData.startDate) > new Date(tourData.endDate)) {
+      setToastMessage("Ngày kết thúc không thể sớm hơn ngày bắt đầu.");
+      setToastOpen(true);
+      return;
+    }
+
     mutate(tourData, {
       onSuccess: () => {
-        alert("Thêm tour thành công!");
-        router.push("/admin/tour");
+        setToastMessage("Thêm tour thành công!");
+        setToastOpen(true);
+        setTimeout(() => {
+          router.push("/admin/tour");
+        }, 1000);
       },
       onError: () => {
-        alert("Có lỗi xảy ra khi thêm tour.");
+        setToastMessage("Có lỗi xảy ra khi thêm tour.");
+        setToastOpen(true);
       },
     });
   };
@@ -76,6 +105,11 @@ export default function CreateTour() {
 
   return (
     <>
+      <ToastMessage
+        message={toastMessage}
+        open={toastOpen}
+        onClose={() => setToastOpen(false)}
+      />
       <Button variant="contained" color="primary" onClick={handleBack}>
         Trở lại
       </Button>
@@ -90,7 +124,6 @@ export default function CreateTour() {
               name="name"
               value={tourData.name}
               onChange={handleChange}
-              required
             />
             <TextField
               label="Giá Tour (VND)"
@@ -98,7 +131,6 @@ export default function CreateTour() {
               type="number"
               value={tourData.price}
               onChange={handleChange}
-              required
             />
             <TextField
               label="Ngày Bắt Đầu"
@@ -106,7 +138,6 @@ export default function CreateTour() {
               type="date"
               value={tourData.startDate}
               onChange={handleChange}
-              required
               InputLabelProps={{
                 shrink: true,
               }}
@@ -117,7 +148,6 @@ export default function CreateTour() {
               type="date"
               value={tourData.endDate}
               onChange={handleChange}
-              required
               InputLabelProps={{
                 shrink: true,
               }}
@@ -129,7 +159,6 @@ export default function CreateTour() {
               onChange={handleChange}
               multiline
               rows={4}
-              required
             />
             <Box sx={{ minWidth: 120 }}>
               <FormControl fullWidth>

@@ -104,7 +104,7 @@ export default function TourPage() {
                   alt={tour.name}
                 />
                 <CardContent>
-                  <Typography gutterBottom variant="h5" component="div">
+                  <Typography gutterBottom variant="h6" component="div">
                     {tour.name}
                   </Typography>
                   <Typography variant="body2" color="text.secondary">

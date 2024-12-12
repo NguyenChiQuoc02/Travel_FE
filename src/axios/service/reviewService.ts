@@ -42,7 +42,7 @@ export const createReview = async (review: Review) => {
     const url = `${API_END_POINT}/customer/review`;
     const response = await axios.post(url, review, {
       headers: {
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${token || ""}`,
         "Content-Type": "application/json",
       },
     });

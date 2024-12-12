@@ -10,17 +10,16 @@ import {
 } from "@mui/material";
 import { useRouter } from "next/navigation";
 import { destinationService } from "@/axios/service";
-import { useForm, Controller } from "react-hook-form";
+import ToastMessage from "@/components/shared/Inform/toastMessage";
 
 const CreateDestination = () => {
-  const {
-    control,
-    handleSubmit,
-    formState: { errors },
-  } = useForm();
+  const [name, setName] = useState<string>("");
+  const [description, setDescription] = useState<string>("");
+  const [location, setLocation] = useState<string>("");
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
-  const [message, setMessage] = useState("");
+  const [toastOpen, setToastOpen] = useState<boolean>(false);
+  const [toastMessage, setToastMessage] = useState<string>("");
   const router = useRouter();
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -33,135 +32,124 @@ const CreateDestination = () => {
     }
   };
 
-  const onSubmit = async (data: any) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
     if (!file) {
-      setMessage("Vui lòng chọn file ảnh!");
+      setToastMessage("Vui lòng chọn ảnh");
+      setToastOpen(true);
+      return;
+    }
+    if (!name || !location || !description) {
+      setToastMessage("Vui lòng không để trống các trường");
+      setToastOpen(true);
       return;
     }
 
     try {
       await destinationService.createDestination(
-        data.name,
-        data.description,
-        data.location,
+        name,
+        description,
+        location,
         file
       );
-      alert("Tạo điểm đến thành công!");
+      setToastMessage("Tạo điểm đến thành công");
+      setToastOpen(true);
       router.push("/admin/destination");
     } catch (error) {
       console.error("Có lỗi khi tạo điểm đến:", error);
-      setMessage("Có lỗi xảy ra khi tạo điểm đến!");
+      setToastMessage("Có lỗi khi tạo điểm đến");
+      setToastOpen(true);
     }
   };
 
   return (
-    <Box
-      sx={{
-        maxWidth: 600,
-        margin: "0 auto",
-        padding: 4,
-        borderRadius: 2,
-        boxShadow: "0 0 10px rgba(0, 0, 0, 0.1)",
-        backgroundColor: "#fff",
-      }}
-    >
-      <Typography variant="h4" gutterBottom>
-        Tạo điểm đến
-      </Typography>
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <Controller
-          name="name"
-          control={control}
-          defaultValue=""
-          rules={{ required: "Tên là bắt buộc" }}
-          render={({ field }) => (
-            <TextField
-              {...field}
-              fullWidth
-              label="Tên"
-              variant="outlined"
-              margin="normal"
-              error={!!errors.name}
-            />
-          )}
-        />
-        <Controller
-          name="description"
-          control={control}
-          defaultValue=""
-          rules={{ required: "Mô tả là bắt buộc" }}
-          render={({ field }) => (
-            <TextareaAutosize
-              {...field}
-              minRows={4}
-              placeholder="Mô tả"
-              style={{
-                width: "100%",
-                padding: 8,
-                marginTop: 16,
-                fontSize: "16px",
-                borderRadius: 4,
-                borderColor: "#ccc",
-              }}
-            />
-          )}
-        />
-        <Controller
-          name="location"
-          control={control}
-          defaultValue=""
-          rules={{ required: "Địa điểm là bắt buộc" }}
-          render={({ field }) => (
-            <TextField
-              {...field}
-              fullWidth
-              label="Địa điểm"
-              variant="outlined"
-              margin="normal"
-              error={!!errors.location}
-            />
-          )}
-        />
-        <Button
-          variant="contained"
-          component="label"
-          sx={{ mt: 2, mb: 2 }}
-          fullWidth
-        >
-          Tải ảnh
-          <input
-            type="file"
-            accept="image/*"
-            hidden
-            onChange={handleFileChange}
-          />
-        </Button>
-        {preview && (
-          <Card sx={{ maxWidth: "100%", mt: 2 }}>
-            <CardMedia
-              component="img"
-              height="300"
-              image={preview}
-              alt="Preview"
-            />
-          </Card>
-        )}
-        <Button
-          type="submit"
-          variant="contained"
-          color="primary"
-          fullWidth
-          sx={{ mt: 2 }}
-        >
-          Tạo
-        </Button>
-      </form>
-      {message && (
-        <Typography color="error" sx={{ mt: 2 }}>
-          {message}
+    <>
+      <ToastMessage
+        message={toastMessage}
+        open={toastOpen}
+        onClose={() => setToastOpen(false)}
+      />
+      <Box
+        sx={{
+          maxWidth: 600,
+          margin: "0 auto",
+          padding: 4,
+          borderRadius: 2,
+          boxShadow: "0 0 10px rgba(0, 0, 0, 0.1)",
+          backgroundColor: "#fff",
+        }}
+      >
+        <Typography variant="h4" gutterBottom>
+          Tạo điểm đến
         </Typography>
-      )}
-    </Box>
+        <form onSubmit={handleSubmit}>
+          <TextField
+            fullWidth
+            label="Tên"
+            variant="outlined"
+            margin="normal"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+          />
+          <TextareaAutosize
+            minRows={4}
+            placeholder="Mô tả"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            style={{
+              width: "100%",
+              padding: 8,
+              marginTop: 16,
+              fontSize: "16px",
+              borderRadius: 4,
+              borderColor: "#ccc",
+            }}
+          />
+          <TextField
+            fullWidth
+            label="Địa điểm"
+            variant="outlined"
+            margin="normal"
+            value={location}
+            onChange={(e) => setLocation(e.target.value)}
+          />
+          <Button
+            variant="contained"
+            component="label"
+            sx={{ mt: 2, mb: 2 }}
+            fullWidth
+          >
+            Tải ảnh
+            <input
+              type="file"
+              accept="image/*"
+              hidden
+              onChange={handleFileChange}
+            />
+          </Button>
+          {preview && (
+            <Card sx={{ maxWidth: "100%", mt: 2 }}>
+              <CardMedia
+                component="img"
+                height="300"
+                image={preview}
+                alt="Preview"
+              />
+            </Card>
+          )}
+          <Button
+            type="submit"
+            variant="contained"
+            color="primary"
+            fullWidth
+            sx={{ mt: 2 }}
+          >
+            Tạo
+          </Button>
+        </form>
+      </Box>
+    </>
   );
 };
 

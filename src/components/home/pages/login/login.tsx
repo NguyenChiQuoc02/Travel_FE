@@ -6,12 +6,15 @@ import Alert from "@mui/material/Alert";
 import AlertTitle from "@mui/material/AlertTitle";
 import "./login.scss";
 import { validateForm } from "@/utils/validation/validateLogin";
+import ToastMessage from "@/components/shared/Inform/toastMessage";
 
 const LoginForm: React.FC = () => {
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+  const [toastOpen, setToastOpen] = useState<boolean>(false);
+  const [toastMessage, setToastMessage] = useState<string>("");
   const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -26,9 +29,9 @@ const LoginForm: React.FC = () => {
       const userData = await login(username, password);
       setError(null);
       setSuccess("Đăng nhập thành công!");
-
+      setToastMessage("Đăng nhập thành công");
+      setToastOpen(true);
       window.dispatchEvent(new Event("storage"));
-      console.log("check user>>>", userData);
 
       setTimeout(() => {
         if (userData.roles.includes("ROLE_ADMIN")) {
@@ -94,6 +97,11 @@ const LoginForm: React.FC = () => {
           </Typography>
         </form>
       </div>
+      <ToastMessage
+        message={toastMessage}
+        open={toastOpen}
+        onClose={() => setToastOpen(false)}
+      />
     </div>
   );
 };

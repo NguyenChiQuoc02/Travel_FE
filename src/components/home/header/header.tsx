@@ -63,6 +63,7 @@ const AppHeader = () => {
   const handlelogout = () => {
     localStorage.removeItem("accessToken");
     localStorage.removeItem("userInfo");
+    localStorage.removeItem("userAuth");
     setLoad((prevLoad) => !prevLoad);
     setUser(null);
     setIsDropdownOpen(false);

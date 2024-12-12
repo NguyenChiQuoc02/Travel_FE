@@ -16,11 +16,14 @@ import { tourService } from "@/axios/service";
 import { useRouter } from "next/navigation";
 import { API_END_POINT } from "@/axios/api";
 import { Tour } from "@/axios/data.type/tour";
+import ToastMessage from "@/components/shared/Inform/toastMessage";
 
 export default function AdminTour() {
   const [tours, setTours] = useState<Tour[]>([]);
   const [page, setPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
+  const [toastOpen, setToastOpen] = useState<boolean>(false);
+  const [toastMessage, setToastMessage] = useState<string>("");
   const router = useRouter();
 
   const itemsPerPage = 6;
@@ -68,92 +71,102 @@ export default function AdminTour() {
       tourService
         .deleteTour(id)
         .then(() => {
-          alert("Xóa tour thành công!");
+          setToastMessage("Xóa tour thành công!");
+          setToastOpen(true);
           fetchTours();
         })
         .catch((error) => {
           console.error("Error deleting tour:", error);
-          alert("Có lỗi xảy ra khi xóa tour.");
+          setToastMessage("Có lỗi xảy ra khi xóa tour.");
+          setToastOpen(true);
         });
     }
   };
 
   return (
-    <Container sx={{ justifyContent: "center", marginTop: 5 }}>
-      <Typography variant="h4" align="center" gutterBottom>
-        Danh sách tour hấp dẫn
-      </Typography>
-
-      <Stack
-        direction="row"
-        spacing={2}
-        sx={{ justifyContent: "flex-end", marginBottom: 2 }}
-      >
-        <Button variant="contained" color="primary" onClick={handleAddTour}>
-          Thêm Tour
-        </Button>
-      </Stack>
-
-      <TableContainer component={Paper}>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>ID</TableCell>
-              <TableCell>Tên Tour</TableCell>
-              <TableCell>Giá</TableCell>
-              <TableCell>Thời gian</TableCell>
-              <TableCell>Mô tả</TableCell>
-              <TableCell>Hình ảnh</TableCell>
-              <TableCell></TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {tours.map((tour) => (
-              <TableRow key={tour.tourId}>
-                <TableCell>{tour.tourId}</TableCell>
-                <TableCell>{tour.name}</TableCell>
-                <TableCell>{tour.price} VND</TableCell>
-                <TableCell>
-                  {tour.startDate} - {tour.endDate}
-                </TableCell>
-                <TableCell>{tour.descriptionTour}</TableCell>
-                <TableCell>
-                  <img
-                    src={`${API_END_POINT}/image/viewImage/${tour.destination.imageUrl}`}
-                    alt={tour.name}
-                    style={{ width: "100px", height: "auto" }}
-                  />
-                </TableCell>
-                <TableCell>
-                  <Stack direction="row" spacing={1}>
-                    <Button
-                      variant="outlined"
-                      color="primary"
-                      onClick={() => handleEditTour(tour.tourId)}
-                    >
-                      Sửa
-                    </Button>
-                    <Button
-                      variant="outlined"
-                      color="error"
-                      onClick={() => handleDeleteTour(tour.tourId)}
-                    >
-                      Xóa
-                    </Button>
-                  </Stack>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
-
-      <Pagination
-        count={totalPages}
-        page={page + 1}
-        onChange={(event, value) => handlePageChange(event, value - 1)}
-        sx={{ display: "flex", justifyContent: "center", marginTop: 3 }}
+    <>
+      <ToastMessage
+        message={toastMessage}
+        open={toastOpen}
+        onClose={() => setToastOpen(false)}
       />
-    </Container>
+
+      <Container sx={{ justifyContent: "center", marginTop: 5 }}>
+        <Typography variant="h4" align="center" gutterBottom>
+          Danh sách tour hấp dẫn
+        </Typography>
+
+        <Stack
+          direction="row"
+          spacing={2}
+          sx={{ justifyContent: "flex-end", marginBottom: 2 }}
+        >
+          <Button variant="contained" color="primary" onClick={handleAddTour}>
+            Thêm Tour
+          </Button>
+        </Stack>
+
+        <TableContainer component={Paper}>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell>ID</TableCell>
+                <TableCell>Tên Tour</TableCell>
+                <TableCell>Giá</TableCell>
+                <TableCell>Thời gian</TableCell>
+                <TableCell>Mô tả</TableCell>
+                <TableCell>Hình ảnh</TableCell>
+                <TableCell></TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {tours.map((tour) => (
+                <TableRow key={tour.tourId}>
+                  <TableCell>{tour.tourId}</TableCell>
+                  <TableCell>{tour.name}</TableCell>
+                  <TableCell>{tour.price} VND</TableCell>
+                  <TableCell>
+                    {tour.startDate} - {tour.endDate}
+                  </TableCell>
+                  <TableCell>{tour.descriptionTour}</TableCell>
+                  <TableCell>
+                    <img
+                      src={`${API_END_POINT}/image/viewImage/${tour.destination.imageUrl}`}
+                      alt={tour.name}
+                      style={{ width: "100px", height: "auto" }}
+                    />
+                  </TableCell>
+                  <TableCell>
+                    <Stack direction="row" spacing={1}>
+                      <Button
+                        variant="outlined"
+                        color="primary"
+                        onClick={() => handleEditTour(tour.tourId)}
+                      >
+                        Sửa
+                      </Button>
+                      <Button
+                        variant="outlined"
+                        color="error"
+                        onClick={() => handleDeleteTour(tour.tourId)}
+                      >
+                        Xóa
+                      </Button>
+                    </Stack>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+
+        <Pagination
+          count={totalPages}
+          page={page + 1}
+          onChange={(event, value) => handlePageChange(event, value - 1)}
+          sx={{ display: "flex", justifyContent: "center", marginTop: 3 }}
+        />
+      </Container>
+    </>
   );
 }

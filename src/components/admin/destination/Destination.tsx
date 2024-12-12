@@ -18,11 +18,14 @@ import {
 } from "@mui/material";
 import { API_END_POINT } from "@/axios/api";
 import { Destination } from "@/axios/data.type/destination";
+import ToastMessage from "@/components/shared/Inform/toastMessage";
 
 export default function AdminDestination() {
   const [destinations, setDestinations] = useState<Destination[]>([]);
   const [page, setPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
+  const [toastOpen, setToastOpen] = useState<boolean>(false);
+  const [toastMessage, setToastMessage] = useState<string>("");
   const router = useRouter();
 
   const itemsPerPage = 6;
@@ -67,17 +70,24 @@ export default function AdminDestination() {
       destinationService
         .deleteDestination(id)
         .then(() => {
-          alert("Xóa địa điểm thành công!");
+          setToastMessage("Xóa địa điểm thành công!");
+          setToastOpen(true);
           fetchDestination();
         })
         .catch((error) => {
           console.error("Error deleting tour:", error);
-          alert("Có lỗi xảy ra khi xóa tour.");
+          setToastMessage("Có lỗi xảy ra khi xóa tour.");
+          setToastOpen(true);
         });
     }
   };
   return (
     <>
+      <ToastMessage
+        message={toastMessage}
+        open={toastOpen}
+        onClose={() => setToastOpen(false)}
+      />
       <Container sx={{ justifyContent: "center", marginTop: 5 }}>
         <Typography variant="h4" align="center" gutterBottom>
           Điểm đến hấp dẫn
@@ -92,7 +102,7 @@ export default function AdminDestination() {
             color="primary"
             onClick={handleAddDestination}
           >
-            Thêm Tour
+            Thêm địa điểm
           </Button>
         </Stack>
         <TableContainer component={Paper}>

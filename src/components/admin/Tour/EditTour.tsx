@@ -14,6 +14,7 @@ import FormControl from "@mui/material/FormControl";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
 import { useMutation } from "@tanstack/react-query";
 import { ChangeTour } from "@/axios/data.type/tour";
+import ToastMessage from "@/components/shared/Inform/toastMessage";
 
 const initialTour: ChangeTour = {
   name: "",
@@ -27,6 +28,8 @@ const EditTour: React.FC<{ id: number }> = ({ id }) => {
   const [destinations, setDestinations] = useState<any[]>([]);
   const [tourData, setTourData] = useState(initialTour);
   const router = useRouter();
+  const [toastOpen, setToastOpen] = useState<boolean>(false);
+  const [toastMessage, setToastMessage] = useState<string>("");
 
   const { mutate } = useMutation({
     mutationFn: (body: ChangeTour) => {
@@ -53,11 +56,15 @@ const EditTour: React.FC<{ id: number }> = ({ id }) => {
     e.preventDefault();
     mutate(tourData, {
       onSuccess: () => {
-        alert("Cập nhật tour thành công!");
-        router.push("/admin/tour");
+        setToastMessage("Cập nhật tour thành công!");
+        setToastOpen(true);
+        setTimeout(() => {
+          router.push("/admin/tour");
+        }, 1000);
       },
       onError: () => {
-        alert("Có lỗi xảy ra khi cập nhật tour.");
+        setToastMessage("Có lỗi xảy ra khi cập nhật tour.");
+        setToastOpen(true);
       },
     });
   };
@@ -87,6 +94,11 @@ const EditTour: React.FC<{ id: number }> = ({ id }) => {
 
   return (
     <>
+      <ToastMessage
+        message={toastMessage}
+        open={toastOpen}
+        onClose={() => setToastOpen(false)}
+      />
       <Button variant="contained" color="primary" onClick={handleBack}>
         Trở lại
       </Button>

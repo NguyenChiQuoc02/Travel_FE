@@ -7,6 +7,7 @@ import Alert from "@mui/material/Alert";
 import AlertTitle from "@mui/material/AlertTitle";
 import "./register.scss";
 import { validateForm } from "@/utils/validation/validateRegister";
+import ToastMessage from "@/components/shared/Inform/toastMessage";
 
 const RegisterForm: React.FC = () => {
   const [username, setUsername] = useState<string>("");
@@ -15,6 +16,8 @@ const RegisterForm: React.FC = () => {
   const [phoneNumber, setPhoneNumber] = useState<string>("");
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+  const [toastOpen, setToastOpen] = useState<boolean>(false);
+  const [toastMessage, setToastMessage] = useState<string>("");
   const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -40,9 +43,10 @@ const RegisterForm: React.FC = () => {
 
       if (data.includes("Thành công")) {
         setTimeout(() => {
-          setSuccess("Đăng ký thành công!");
           router.push("/home/login");
-        }, 2000);
+        }, 1000);
+        setToastMessage("Đăng kí thành công");
+        setToastOpen(true);
       } else if (data.includes("Username đã tồn tại")) {
         setError("Tên đăng nhập đã tồn tại.");
       } else if (data.includes("Email đã tồn tại")) {
@@ -123,6 +127,11 @@ const RegisterForm: React.FC = () => {
           </Link>
         </Typography>
       </form>
+      <ToastMessage
+        message={toastMessage}
+        open={toastOpen}
+        onClose={() => setToastOpen(false)}
+      />
     </div>
   );
 };
