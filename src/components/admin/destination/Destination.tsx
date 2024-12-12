@@ -17,20 +17,13 @@ import {
   Button,
 } from "@mui/material";
 import { API_END_POINT } from "@/axios/api";
+import { Destination } from "@/axios/data.type/destination";
 
 export default function AdminDestination() {
   const [destinations, setDestinations] = useState<Destination[]>([]);
   const [page, setPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
   const router = useRouter();
-
-  interface Destination {
-    destinationId: number;
-    name: string;
-    description: string;
-    location: string;
-    imageUrl: string;
-  }
 
   const itemsPerPage = 6;
 
@@ -163,7 +156,7 @@ export default function AdminDestination() {
         <Pagination
           count={totalPages}
           page={page + 1}
-          onChange={(event, value) => handlePageChange(event, value - 1)} // Điều chỉnh để truyền đúng giá trị cho state
+          onChange={(event, value) => handlePageChange(event, value - 1)}
           sx={{ display: "flex", justifyContent: "center", marginTop: 3 }}
         />
       </Container>

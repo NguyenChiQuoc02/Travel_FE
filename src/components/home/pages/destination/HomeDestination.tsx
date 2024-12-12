@@ -6,13 +6,12 @@ import CardActionArea from "@mui/material/CardActionArea";
 import CardMedia from "@mui/material/CardMedia";
 import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
-import axios from "axios";
 import Grid from "@mui/material/Grid";
 import Pagination from "@mui/material/Pagination";
-import { destinationService, tourService } from "@/axios/service";
-import { useRouter } from "next/navigation";
+import { destinationService } from "@/axios/service";
 import TourDestination from "./TourDestination";
 import { API_END_POINT } from "@/axios/api";
+import { Destination } from "@/axios/data.type/destination";
 
 export default function HDestination() {
   const [destinations, setDestinations] = useState<Destination[]>([]);
@@ -20,14 +19,6 @@ export default function HDestination() {
   const [totalPages, setTotalPages] = useState(0);
   const [desId, setDesId] = useState<number>(0);
   const [nav, setNav] = useState<boolean>(false);
-  const router = useRouter();
-  interface Destination {
-    destinationId: number;
-    name: string;
-    description: string;
-    location: string;
-    imageUrl: string;
-  }
 
   const itemsPerPage = 6;
 
@@ -104,7 +95,7 @@ export default function HDestination() {
           <Pagination
             count={totalPages}
             page={page + 1}
-            onChange={(event, value) => handlePageChange(event, value - 1)} // Điều chỉnh để truyền đúng giá trị cho state
+            onChange={(event, value) => handlePageChange(event, value - 1)}
             sx={{ display: "flex", justifyContent: "center", marginTop: 3 }}
           />
         </Container>

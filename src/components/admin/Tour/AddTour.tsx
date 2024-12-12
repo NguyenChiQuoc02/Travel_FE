@@ -14,27 +14,21 @@ import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
-import { useMutation, useQueryClient } from "react-query";
+import { useMutation } from "@tanstack/react-query";
+import { ChangeTour } from "@/axios/data.type/tour";
+import { Destination } from "@/axios/data.type/destination";
 
 export default function CreateTour() {
   const [destinationId, setDestinationId] = useState<number>(5);
-  const [destinations, setDestinations] = useState<any[]>([]);
+  const [destinations, setDestinations] = useState<Destination[]>([]);
   const [tourData, setTourData] = useState({
     name: "",
-    price: "",
+    price: 0,
     startDate: "",
     endDate: "",
     descriptionTour: "",
   });
   const router = useRouter();
-  const queryClient = useQueryClient();
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setTourData({
-      ...tourData,
-      [e.target.name]: e.target.value,
-    });
-  };
 
   const handleSelectChange = (event: SelectChangeEvent<string | number>) => {
     setDestinationId(Number(event.target.value));
@@ -44,33 +38,32 @@ export default function CreateTour() {
     router.push("/admin/tour");
   };
 
-  const mutation = useMutation(
-    async () => {
-      return await tourService.createTour(
-        { ...tourData, price: parseFloat(tourData.price) },
-        destinationId
-      );
+  const { mutate, error, data, reset } = useMutation({
+    mutationFn: (body: ChangeTour) => {
+      return tourService.createTour(body, destinationId);
     },
-    {
-      onSuccess: (data) => {
-        if (data.status === "ok") {
-          alert("Tạo tour thành công!");
-          queryClient.invalidateQueries("tours");
-          router.push("/admin/tour");
-        } else {
-          alert("Có lỗi xảy ra: " + data.message);
-        }
-      },
-      onError: (error) => {
-        console.error("Error creating tour:", error);
-        alert("Có lỗi xảy ra khi tạo tour.");
-      },
+  });
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setTourData({
+      ...tourData,
+      [e.target.name]: e.target.value,
+    });
+    if (data || error) {
+      reset();
     }
-  );
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    mutation.mutate();
+    mutate(tourData, {
+      onSuccess: () => {
+        alert("Thêm tour thành công!");
+        router.push("/admin/tour");
+      },
+      onError: () => {
+        alert("Có lỗi xảy ra khi thêm tour.");
+      },
+    });
   };
 
   useEffect(() => {
@@ -159,13 +152,8 @@ export default function CreateTour() {
                 </Select>
               </FormControl>
             </Box>
-            <Button
-              variant="contained"
-              color="primary"
-              type="submit"
-              disabled={mutation.isLoading}
-            >
-              {mutation.isLoading ? "Đang xử lý..." : "Tạo Tour"}
+            <Button variant="contained" color="primary" type="submit">
+              Tạo Tour
             </Button>
           </Stack>
         </form>

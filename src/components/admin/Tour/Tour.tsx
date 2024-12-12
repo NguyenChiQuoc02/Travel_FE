@@ -15,22 +15,7 @@ import Stack from "@mui/material/Stack";
 import { tourService } from "@/axios/service";
 import { useRouter } from "next/navigation";
 import { API_END_POINT } from "@/axios/api";
-
-interface Tour {
-  tourId: number;
-  name: string;
-  price: number;
-  startDate: string;
-  endDate: string;
-  descriptionTour: string;
-  destination: {
-    destinationId: number;
-    name: string;
-    description: string;
-    location: string;
-    imageUrl: string;
-  };
-}
+import { Tour } from "@/axios/data.type/tour";
 
 export default function AdminTour() {
   const [tours, setTours] = useState<Tour[]>([]);

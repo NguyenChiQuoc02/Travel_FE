@@ -12,18 +12,27 @@ import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
+import { useMutation } from "@tanstack/react-query";
+import { ChangeTour } from "@/axios/data.type/tour";
 
+const initialTour: ChangeTour = {
+  name: "",
+  price: 0,
+  startDate: "",
+  endDate: "",
+  descriptionTour: "",
+};
 const EditTour: React.FC<{ id: number }> = ({ id }) => {
   const [destinationId, setDestinationId] = useState<number>(0);
   const [destinations, setDestinations] = useState<any[]>([]);
-  const [tourData, setTourData] = useState({
-    name: "",
-    price: "",
-    startDate: "",
-    endDate: "",
-    descriptionTour: "",
-  });
+  const [tourData, setTourData] = useState(initialTour);
   const router = useRouter();
+
+  const { mutate } = useMutation({
+    mutationFn: (body: ChangeTour) => {
+      return tourService.editTour(body, id, destinationId);
+    },
+  });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setTourData({
@@ -42,26 +51,15 @@ const EditTour: React.FC<{ id: number }> = ({ id }) => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    try {
-      const response = await tourService.editTour(
-        {
-          ...tourData,
-          price: parseFloat(tourData.price),
-        },
-        id,
-        destinationId
-      );
-
-      if (response && response.status === "ok") {
+    mutate(tourData, {
+      onSuccess: () => {
         alert("Cập nhật tour thành công!");
         router.push("/admin/tour");
-      } else {
-        alert("Có lỗi xảy ra: " + response.message);
-      }
-    } catch (error) {
-      console.error("Error updating tour:", error);
-      alert("Có lỗi xảy ra khi cập nhật tour.");
-    }
+      },
+      onError: () => {
+        alert("Có lỗi xảy ra khi cập nhật tour.");
+      },
+    });
   };
 
   useEffect(() => {

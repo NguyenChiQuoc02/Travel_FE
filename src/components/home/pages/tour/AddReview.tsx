@@ -10,17 +10,13 @@ import {
 } from "@mui/material";
 import { reviewService } from "@/axios/service/index";
 
-interface AddReviewProps {
+interface Props {
   open: boolean;
   onClose: () => void;
   destinationId: number;
 }
 
-const AddReview: React.FC<AddReviewProps> = ({
-  open,
-  onClose,
-  destinationId,
-}) => {
+const AddReview: React.FC<Props> = ({ open, onClose, destinationId }) => {
   const [rating, setRating] = useState<number | null>(0);
   const [comment, setComment] = useState<string>("");
 

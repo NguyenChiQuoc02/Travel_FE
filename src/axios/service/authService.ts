@@ -1,20 +1,6 @@
 import axios from "axios";
 import { API_END_POINT } from "../api";
-
-interface LoginResponse {
-  accessToken: string;
-  id: number;
-  username: string;
-  email: string;
-  roles: string[];
-  tokenType: string;
-}
-interface Register {
-  email: string;
-  username: string;
-  password: string;
-  phoneNumber: string;
-}
+import { ILogin } from "../data.type/auth";
 
 const LOGIN_API_URL = `${API_END_POINT}/api/auth/login`;
 const REGISTER_API_URL = `${API_END_POINT}/api/auth/register`;
@@ -22,9 +8,9 @@ const REGISTER_API_URL = `${API_END_POINT}/api/auth/register`;
 export const login = async (
   username: string,
   password: string
-): Promise<LoginResponse> => {
+): Promise<ILogin> => {
   try {
-    const response = await axios.post<LoginResponse>(LOGIN_API_URL, {
+    const response = await axios.post<ILogin>(LOGIN_API_URL, {
       username,
       password,
     });
@@ -37,7 +23,7 @@ export const login = async (
     localStorage.setItem("userInfo", JSON.stringify(users));
     return response.data;
   } catch (error) {
-    console.error("Đăng nhập thất bại:", error);
+    console.log("Đăng nhập thất bại:", error);
     throw error;
   }
 };
@@ -47,16 +33,15 @@ export const register = async (
   password: string,
   email: string,
   phoneNumber: string
-): Promise<Register> => {
+): Promise<string> => {
   try {
-    const response = await axios.post<Register>(REGISTER_API_URL, {
+    const response = await axios.post<string>(REGISTER_API_URL, {
       username,
       password,
       email,
       phoneNumber: phoneNumber.toString(),
     });
-
-    // console.log("Đăng ký thành công! >>> ", response.data);
+    // console.log(response.data);
     return response.data;
   } catch (error) {
     console.error("Đăng ký thất bại:", error);

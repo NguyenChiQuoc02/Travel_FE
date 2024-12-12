@@ -1,7 +1,6 @@
 import axios from "axios";
 import { API_END_POINT } from "../api";
-
-// localStorage.setItem("userAuth", `ROLE_GUEST`);
+import { ChangeTour } from "../data.type/tour";
 
 const token = localStorage.getItem("accessToken");
 
@@ -78,7 +77,7 @@ export const fetchToursAdmin = async (
   }
 };
 
-export const createTour = async (tourData: any, id: number) => {
+export const createTour = async (tourData: ChangeTour, id: number) => {
   try {
     const url = `${API_END_POINT}/admin/tour?destinationId=${id}`;
     const response = await axios.post(url, tourData, {
@@ -95,7 +94,7 @@ export const createTour = async (tourData: any, id: number) => {
 };
 
 export const editTour = async (
-  tourData: any,
+  tourData: ChangeTour,
   id: number,
   destinationId: number
 ) => {
@@ -129,46 +128,11 @@ export const deleteTour = async (id: number) => {
     return null;
   }
 };
-// export const searchTour = async (
-//   page?: number,
-//   size?: number,
-//   name?: string,
-//   minPrice?: number,
-//   maxPrice?: number,
-//   startDate?: string
-// ) => {
-//   try {
-//     let url = `${API_END_POINT}/home/tour/search?page=${page || 1}&size=${
-//       size || 10
-//     }`;
-//     console.log("check >>>>>", minPrice, maxPrice, name, startDate);
 
-//     if (name != undefined) {
-//       url += `&name=${name}`;
-//     }
-//     if (minPrice !== undefined) {
-//       url += `&minPrice=${minPrice}`;
-//     }
-//     if (maxPrice !== undefined) {
-//       url += `&maxPrice=${maxPrice}`;
-//     }
-//     if (startDate != undefined) {
-//       url += `&startDate=${startDate}`;
-//     }
-
-//     const response = await axios.get(url);
-//     return response.data;
-//   } catch (error) {
-//     console.error("Error fetching destinations:", error);
-//     return null;
-//   }
-// };
 export const searchTour = async (
   page?: number,
   size?: number,
-  name?: string,
-  minPrice?: number,
-  maxPrice?: number
+  name?: string
 ) => {
   try {
     let url = `${API_END_POINT}/home/tour/search?page=${page || 0}&size=${
@@ -177,12 +141,6 @@ export const searchTour = async (
 
     if (name) {
       url += `&name=${encodeURIComponent(name)}`;
-    }
-    if (minPrice) {
-      url += `&name=${encodeURIComponent(minPrice)}`;
-    }
-    if (maxPrice) {
-      url += `&name=${encodeURIComponent(maxPrice)}`;
     }
 
     const response = await axios.get(url);

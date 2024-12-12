@@ -1,22 +1,11 @@
 import axios from "axios";
 import { API_END_POINT } from "../api";
+import { Booking } from "../data.type/booking";
+import { Navigation } from "../data.type/navigation";
 
 const token = localStorage.getItem("accessToken") || "";
 
-interface BookingParams {
-  tourId: number;
-  status: string;
-  amount: number;
-  paymentMethod: string;
-  paymentStatus: string;
-}
-
-interface IBooking {
-  page: number;
-  size: number;
-}
-
-export const createBooking = async (bookingData: BookingParams) => {
+export const createBooking = async (bookingData: Booking) => {
   try {
     const response = await axios.post(
       `${API_END_POINT}/customer/booking`,
@@ -75,7 +64,7 @@ export const fetchTotalBooking = async () => {
   }
 };
 
-export const fetchListBookingPage = async (params: IBooking) => {
+export const fetchListBookingPage = async (params: Navigation) => {
   try {
     const response = await axios.get(`${API_END_POINT}/admin/booking`, {
       params: {

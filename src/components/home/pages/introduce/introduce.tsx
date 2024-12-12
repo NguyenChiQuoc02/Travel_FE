@@ -21,7 +21,6 @@ const Intro: React.FC = () => {
   return (
     <Box sx={{ py: 6, bgcolor: "background.default" }}>
       <Container maxWidth="lg">
-        {/* Tiêu đề giới thiệu */}
         <Typography variant="h3" gutterBottom align="center" color="primary">
           Chào mừng đến với Trang Du Lịch của Chúng Tôi!
         </Typography>

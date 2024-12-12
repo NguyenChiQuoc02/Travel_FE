@@ -1,16 +1,8 @@
 import axios from "axios";
 import { API_END_POINT } from "../api";
+import { Review } from "../data.type/Review";
 
 const token = localStorage.getItem("accessToken") || "";
-
-interface Review {
-  destination: {
-    destinationId: number;
-  };
-  rating: number;
-  comment: string;
-  reviewDate: string;
-}
 
 export const fetchReviewByDestinationId = async (id: number) => {
   try {

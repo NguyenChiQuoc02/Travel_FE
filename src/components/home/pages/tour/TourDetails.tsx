@@ -20,7 +20,7 @@ const TourDetail: React.FC<{ id: number }> = ({ id }) => {
   const [tour, setTour] = useState<any>(null);
   const [reviews, setReviews] = useState<any[]>([]);
   const [openbook, setOpenBook] = useState<boolean>(false);
-  const [openAddReview, setOpenAddReview] = useState<boolean>(false); // State to control AddReview modal
+  const [openAddReview, setOpenAddReview] = useState<boolean>(false);
 
   const router = useRouter();
   const getTourDetails = async () => {
@@ -115,13 +115,6 @@ const TourDetail: React.FC<{ id: number }> = ({ id }) => {
                 >
                   Đặt tour nhanh
                 </Button>
-                {/* <Button
-                  variant="outlined"
-                  color="secondary"
-                  href="/home/booking"
-                >
-                  Thêm vào giỏ hàng
-                </Button> */}
               </Box>
             </CardContent>
           </Grid>

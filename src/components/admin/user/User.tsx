@@ -13,20 +13,7 @@ import {
   Pagination,
 } from "@mui/material";
 import { userService } from "@/axios/service/index";
-
-interface Role {
-  id: number;
-  name: string;
-}
-
-interface User {
-  userId: number;
-  name: string;
-  email: string;
-  phoneNumber: string;
-  roles: Role[];
-  deleted: boolean;
-}
+import { User } from "@/axios/data.type/user";
 
 const UserTable: React.FC = () => {
   const [users, setUsers] = useState<User[]>([]);

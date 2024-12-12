@@ -1,32 +1,46 @@
 import React, { useState } from "react";
-import { login } from "../../../../axios/service/authService";
+import { login } from "@/axios/service/authService";
 import { useRouter } from "next/navigation";
 import { TextField, Button, Typography, Link } from "@mui/material";
+import Alert from "@mui/material/Alert";
+import AlertTitle from "@mui/material/AlertTitle";
 import "./login.scss";
+import { validateForm } from "@/utils/validation/validateLogin";
 
-const LoginForm: () => JSX.Element = () => {
+const LoginForm: React.FC = () => {
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
   const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError(null);
 
+    const validationError = validateForm(username, password);
+    if (validationError) {
+      setError(validationError);
+      return;
+    }
     try {
       const userData = await login(username, password);
-      alert("Đăng nhập thành công!");
+      setError(null);
+      setSuccess("Đăng nhập thành công!");
 
       window.dispatchEvent(new Event("storage"));
+      console.log("check user>>>", userData);
 
-      if (userData.roles.includes("ROLE_ADMIN")) {
-        router.push("/admin");
-      } else {
-        router.push("/home");
-      }
-    } catch (err) {
-      setError("Tên đăng nhập hoặc mật khẩu không chính xác.");
+      setTimeout(() => {
+        if (userData.roles.includes("ROLE_ADMIN")) {
+          router.push("/admin");
+        } else {
+          router.push("/home");
+        }
+      }, 1000);
+    } catch {
+      setError(
+        "Tên đăng nhập, mật khẩu không chính xác hoặc tài khoản đã bị xóa."
+      );
     }
   };
 
@@ -42,7 +56,6 @@ const LoginForm: () => JSX.Element = () => {
               fullWidth
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              required
             />
           </div>
           <div style={{ marginBottom: "16px" }}>
@@ -53,10 +66,20 @@ const LoginForm: () => JSX.Element = () => {
               fullWidth
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              required
             />
           </div>
-          {error && <Typography color="error">{error}</Typography>}
+          {error && (
+            <Alert severity="error" style={{ marginBottom: "16px" }}>
+              <AlertTitle sx={{ marginTop: "-5px" }}></AlertTitle>
+              {error}
+            </Alert>
+          )}
+          {success && (
+            <Alert severity="success" style={{ marginBottom: "16px" }}>
+              <AlertTitle sx={{ marginTop: "-5px" }}></AlertTitle>
+              {success}
+            </Alert>
+          )}
           <Button variant="contained" color="primary" type="submit" fullWidth>
             Đăng nhập
           </Button>

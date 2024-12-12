@@ -54,6 +54,9 @@ export const EditDestination: React.FC<{ id: number }> = ({ id }) => {
         alert("Vui lòng điền đầy đủ thông tin!");
         return;
       }
+      if (file) {
+        setFile(null);
+      }
 
       await destinationService.editDestination(
         id.toString(),

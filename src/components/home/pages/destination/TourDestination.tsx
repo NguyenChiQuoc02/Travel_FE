@@ -12,26 +12,11 @@ import Pagination from "@mui/material/Pagination";
 import { useRouter } from "next/navigation";
 import { Button } from "@mui/material";
 import { API_END_POINT } from "@/axios/api";
+import { Tour } from "@/axios/data.type/tour";
 
 interface TourDestinationProps {
   desId: number;
   onBack: () => void;
-}
-
-interface Tour {
-  tourId: number;
-  name: string;
-  price: number;
-  startDate: string;
-  endDate: string;
-  descriptionTour: string;
-  destination: {
-    destinationId: number;
-    name: string;
-    description: string;
-    location: string;
-    imageUrl: string;
-  };
 }
 
 const TourDestination: React.FC<TourDestinationProps> = ({ desId, onBack }) => {

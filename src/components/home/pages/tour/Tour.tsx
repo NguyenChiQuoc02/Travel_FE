@@ -10,52 +10,25 @@ import Grid from "@mui/material/Grid";
 import Pagination from "@mui/material/Pagination";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
-import MenuItem from "@mui/material/MenuItem";
-import Select from "@mui/material/Select";
-import InputLabel from "@mui/material/InputLabel";
-import FormControl from "@mui/material/FormControl";
 import Box from "@mui/material/Box";
 import { tourService } from "@/axios/service";
 import { useRouter } from "next/navigation";
 import { API_END_POINT } from "@/axios/api";
+import { Tour } from "@/axios/data.type/tour";
 
-interface Tour {
-  tourId: number;
-  name: string;
-  price: number;
-  startDate: string;
-  endDate: string;
-  descriptionTour: string;
-  destination: {
-    destinationId: number;
-    name: string;
-    description: string;
-    location: string;
-    imageUrl: string;
-  };
-}
-
-export default function Tour() {
+export default function TourPage() {
   const [tours, setTours] = useState<Tour[]>([]);
-  const [page, setPage] = useState<number>(1);
-  const [totalPages, setTotalPages] = useState<number>(0);
-  const [minPrice, setMinPrice] = useState<number>();
-  const [maxPrice, setMaxPrice] = useState<number>();
+  const [page, setPage] = useState<number>(0);
+  const [totalPages, setTotalPages] = useState<number>(1);
+
   const [name, setName] = useState<string>("");
   const router = useRouter();
 
   const itemsPerPage = 6;
 
-  const priceOptions = [
-    { label: "Dưới 1 triệu", value: 1000000 },
-    { label: "1 - 3 triệu", value: 3000000 },
-    { label: "3 - 5 triệu", value: 5000000 },
-    { label: "Trên 5 triệu", value: undefined },
-  ];
-
   const fetchTours = () => {
     tourService
-      .searchTour(page, itemsPerPage, name, minPrice, maxPrice)
+      .searchTour(page, itemsPerPage, name)
       .then((data) => {
         if (data && data.items) {
           setTours(data.items);
@@ -97,7 +70,6 @@ export default function Tour() {
         Danh sách tour hấp dẫn
       </h1>
 
-      {/* Search Form */}
       <Box
         sx={{
           display: "flex",
@@ -112,37 +84,14 @@ export default function Tour() {
           variant="outlined"
           value={name}
           onChange={(e) => setName(e.target.value)}
-          sx={{ minWidth: 200 }}
+          sx={{ minWidth: 400 }}
         />
-
-        <FormControl sx={{ minWidth: 150 }}>
-          <InputLabel>Mức giá thấp</InputLabel>
-          <Select value={minPrice}>
-            {priceOptions.map((option, index) => (
-              <MenuItem key={index} value={option.value}>
-                {option.label}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-
-        <FormControl sx={{ minWidth: 150 }}>
-          <InputLabel>Mức giá cao</InputLabel>
-          <Select value={maxPrice}>
-            {priceOptions.map((option, index) => (
-              <MenuItem key={index} value={option.value}>
-                {option.label}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
 
         <Button variant="contained" onClick={handleSearch}>
           Tìm kiếm
         </Button>
       </Box>
 
-      {/* Tour List */}
       <Grid container spacing={2} sx={{ justifyContent: "center" }}>
         {tours.map((tour) => (
           <Grid item xs={12} sm={4} md={4} key={tour.tourId}>
@@ -174,11 +123,11 @@ export default function Tour() {
         ))}
       </Grid>
 
-      {totalPages > 1 && (
+      {totalPages >= 1 && (
         <Pagination
           count={totalPages}
-          page={page}
-          onChange={handlePageChange}
+          page={page + 1}
+          onChange={(event, value) => handlePageChange(event, value - 1)}
           sx={{ display: "flex", justifyContent: "center", marginTop: 3 }}
         />
       )}
