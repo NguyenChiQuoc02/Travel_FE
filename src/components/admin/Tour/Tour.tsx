@@ -1,22 +1,15 @@
-"use client";
 import React, { useEffect, useState } from "react";
 import Container from "@mui/material/Container";
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
-import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
-import TableRow from "@mui/material/TableRow";
 import Typography from "@mui/material/Typography";
 import Pagination from "@mui/material/Pagination";
-import Paper from "@mui/material/Paper";
-import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
+import Button from "@mui/material/Button";
+import ToastMessage from "@/components/shared/Inform/toastMessage";
 import { tourService } from "@/axios/service";
 import { useRouter } from "next/navigation";
-import { API_END_POINT } from "@/axios/api";
+import TourTable from "./TourTable";
 import { Tour } from "@/axios/data.type/tour";
-import ToastMessage from "@/components/shared/Inform/toastMessage";
+import ConfirmDelete from "@/components/shared/Inform/dialogDelete";
 
 export default function AdminTour() {
   const [tours, setTours] = useState<Tour[]>([]);
@@ -24,19 +17,16 @@ export default function AdminTour() {
   const [totalPages, setTotalPages] = useState(0);
   const [toastOpen, setToastOpen] = useState<boolean>(false);
   const [toastMessage, setToastMessage] = useState<string>("");
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [selectedTourId, setSelectedTourId] = useState<number | null>(null);
   const router = useRouter();
 
   const itemsPerPage = 6;
-
-  useEffect(() => {
-    fetchTours();
-  }, [page]);
 
   const fetchTours = () => {
     tourService
       .fetchToursAdmin(page, itemsPerPage)
       .then((data) => {
-        console.log("check>>>", data);
         if (data && data.data.items) {
           setTours(data.data.items);
           setTotalPages(data.data.totalPages);
@@ -50,6 +40,10 @@ export default function AdminTour() {
         setTours([]);
       });
   };
+
+  useEffect(() => {
+    fetchTours();
+  }, [page]);
 
   const handlePageChange = (
     event: React.ChangeEvent<unknown>,
@@ -65,11 +59,10 @@ export default function AdminTour() {
   const handleEditTour = (id: number) => {
     router.push(`/admin/tour/edit/${id}`);
   };
-
-  const handleDeleteTour = (id: number) => {
-    if (confirm("Bạn có chắc chắn muốn xóa tour này?")) {
+  const handleDelete = () => {
+    if (selectedTourId !== null) {
       tourService
-        .deleteTour(id)
+        .deleteTour(selectedTourId)
         .then(() => {
           setToastMessage("Xóa tour thành công!");
           setToastOpen(true);
@@ -81,6 +74,11 @@ export default function AdminTour() {
           setToastOpen(true);
         });
     }
+    setDialogOpen(false);
+  };
+  const handleDeleteTour = (id: number) => {
+    setSelectedTourId(id);
+    setDialogOpen(true);
   };
 
   return (
@@ -106,59 +104,11 @@ export default function AdminTour() {
           </Button>
         </Stack>
 
-        <TableContainer component={Paper}>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell>ID</TableCell>
-                <TableCell>Tên Tour</TableCell>
-                <TableCell>Giá</TableCell>
-                <TableCell>Thời gian</TableCell>
-                <TableCell>Mô tả</TableCell>
-                <TableCell>Hình ảnh</TableCell>
-                <TableCell></TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {tours.map((tour) => (
-                <TableRow key={tour.tourId}>
-                  <TableCell>{tour.tourId}</TableCell>
-                  <TableCell>{tour.name}</TableCell>
-                  <TableCell>{tour.price} VND</TableCell>
-                  <TableCell>
-                    {tour.startDate} - {tour.endDate}
-                  </TableCell>
-                  <TableCell>{tour.descriptionTour}</TableCell>
-                  <TableCell>
-                    <img
-                      src={`${API_END_POINT}/image/viewImage/${tour.destination.imageUrl}`}
-                      alt={tour.name}
-                      style={{ width: "100px", height: "auto" }}
-                    />
-                  </TableCell>
-                  <TableCell>
-                    <Stack direction="row" spacing={1}>
-                      <Button
-                        variant="outlined"
-                        color="primary"
-                        onClick={() => handleEditTour(tour.tourId)}
-                      >
-                        Sửa
-                      </Button>
-                      <Button
-                        variant="outlined"
-                        color="error"
-                        onClick={() => handleDeleteTour(tour.tourId)}
-                      >
-                        Xóa
-                      </Button>
-                    </Stack>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
+        <TourTable
+          tours={tours}
+          onEdit={handleEditTour}
+          onDelete={handleDeleteTour}
+        />
 
         <Pagination
           count={totalPages}
@@ -167,6 +117,11 @@ export default function AdminTour() {
           sx={{ display: "flex", justifyContent: "center", marginTop: 3 }}
         />
       </Container>
+      <ConfirmDelete
+        open={dialogOpen}
+        onConfirm={handleDelete}
+        onCancel={() => setDialogOpen(false)}
+      />
     </>
   );
 }

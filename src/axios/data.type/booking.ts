@@ -6,8 +6,3 @@ export interface Booking {
   paymentStatus: string;
 }
 
-export interface BookingDetailsModalProps {
-  open: boolean;
-  bookingDetails: any;
-  handleClose: () => void;
-}

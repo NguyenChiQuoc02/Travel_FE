@@ -15,6 +15,7 @@ import Select, { SelectChangeEvent } from "@mui/material/Select";
 import { useMutation } from "@tanstack/react-query";
 import { ChangeTour } from "@/axios/data.type/tour";
 import ToastMessage from "@/components/shared/Inform/toastMessage";
+import { validateTourData } from "@/utils/validation/validateTour";
 
 const initialTour: ChangeTour = {
   name: "",
@@ -54,6 +55,12 @@ const EditTour: React.FC<{ id: number }> = ({ id }) => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    const validationError = validateTourData(tourData);
+    if (validationError) {
+      setToastMessage(validationError);
+      setToastOpen(true);
+      return;
+    }
     mutate(tourData, {
       onSuccess: () => {
         setToastMessage("Cập nhật tour thành công!");
@@ -113,7 +120,6 @@ const EditTour: React.FC<{ id: number }> = ({ id }) => {
               name="name"
               value={tourData.name}
               onChange={handleChange}
-              required
             />
             <TextField
               label="Giá Tour (VND)"
@@ -121,7 +127,6 @@ const EditTour: React.FC<{ id: number }> = ({ id }) => {
               type="number"
               value={tourData.price}
               onChange={handleChange}
-              required
             />
             <TextField
               label="Ngày Bắt Đầu"
@@ -129,7 +134,6 @@ const EditTour: React.FC<{ id: number }> = ({ id }) => {
               type="date"
               value={tourData.startDate}
               onChange={handleChange}
-              required
               InputLabelProps={{
                 shrink: true,
               }}
@@ -140,7 +144,6 @@ const EditTour: React.FC<{ id: number }> = ({ id }) => {
               type="date"
               value={tourData.endDate}
               onChange={handleChange}
-              required
               InputLabelProps={{
                 shrink: true,
               }}
@@ -152,7 +155,6 @@ const EditTour: React.FC<{ id: number }> = ({ id }) => {
               onChange={handleChange}
               multiline
               rows={4}
-              required
             />
             <Box sx={{ minWidth: 120 }}>
               <FormControl fullWidth>

@@ -12,9 +12,14 @@ import {
 } from "@mui/material";
 import { useFormContext } from "react-hook-form";
 import { API_END_POINT } from "@/axios/api";
-import { BookingDetailsModalProps } from "@/axios/data.type/booking";
 
-const BookingDetailsModal: React.FC<BookingDetailsModalProps> = ({
+interface Props {
+  open: boolean;
+  bookingDetails: any;
+  handleClose: () => void;
+}
+
+const BookingDetailsModal: React.FC<Props> = ({
   open,
   bookingDetails,
   handleClose,

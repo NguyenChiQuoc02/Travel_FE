@@ -86,7 +86,9 @@ export const EditDestination: React.FC<{ id: number }> = ({ id }) => {
 
       setToastMessage("Cập nhật điểm đến thành công!");
       setToastOpen(true);
-      router.push("/admin/destination");
+      setTimeout(() => {
+        router.push("/admin/destination");
+      }, 2000);
     } catch (error) {
       console.error("Error updating destination:", error);
       setToastMessage("Có lỗi xảy ra khi cập nhật điểm đến!");

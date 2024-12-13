@@ -1,31 +1,24 @@
-"use client";
 import React, { useEffect, useState } from "react";
 import Container from "@mui/material/Container";
 import Typography from "@mui/material/Typography";
 import Pagination from "@mui/material/Pagination";
 import { destinationService } from "@/axios/service";
 import { useRouter } from "next/navigation";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
-  Stack,
-  Button,
-} from "@mui/material";
-import { API_END_POINT } from "@/axios/api";
-import { Destination } from "@/axios/data.type/destination";
+import Stack from "@mui/material/Stack";
+import Button from "@mui/material/Button";
 import ToastMessage from "@/components/shared/Inform/toastMessage";
+import DestinationTable from "./DestinationTable";
+import ConfirmDelete from "@/components/shared/Inform/dialogDelete";
 
 export default function AdminDestination() {
-  const [destinations, setDestinations] = useState<Destination[]>([]);
+  const [destinations, setDestinations] = useState([]);
   const [page, setPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
-  const [toastOpen, setToastOpen] = useState<boolean>(false);
-  const [toastMessage, setToastMessage] = useState<string>("");
+  const [toastOpen, setToastOpen] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [destiationId, setDestiationId] = useState<number | null>(null);
+
   const router = useRouter();
 
   const itemsPerPage = 6;
@@ -42,10 +35,11 @@ export default function AdminDestination() {
           setTotalPages(1);
         }
       })
-      .catch((error) => {
+      .catch(() => {
         setDestinations([]);
       });
   };
+
   useEffect(() => {
     fetchDestination();
   }, [page]);
@@ -54,7 +48,7 @@ export default function AdminDestination() {
     event: React.ChangeEvent<unknown>,
     value: number
   ) => {
-    setPage(value);
+    setPage(value - 1);
   };
 
   const handleAddDestination = () => {
@@ -66,21 +60,27 @@ export default function AdminDestination() {
   };
 
   const handleDeleteDestination = (id: number) => {
-    if (confirm("Bạn có chắc chắn muốn xóa tour này?")) {
+    setDestiationId(id);
+    setDialogOpen(true);
+  };
+
+  const handleDelete = () => {
+    if (destiationId !== null) {
       destinationService
-        .deleteDestination(id)
+        .deleteDestination(destiationId)
         .then(() => {
           setToastMessage("Xóa địa điểm thành công!");
           setToastOpen(true);
           fetchDestination();
         })
-        .catch((error) => {
-          console.error("Error deleting tour:", error);
+        .catch(() => {
           setToastMessage("Có lỗi xảy ra khi xóa tour.");
           setToastOpen(true);
         });
     }
+    setDialogOpen(false);
   };
+
   return (
     <>
       <ToastMessage
@@ -105,71 +105,25 @@ export default function AdminDestination() {
             Thêm địa điểm
           </Button>
         </Stack>
-        <TableContainer component={Paper}>
-          <Table sx={{ minWidth: 650 }} aria-label="destination table">
-            <TableHead>
-              <TableRow>
-                <TableCell align="center">ID</TableCell>
-                <TableCell align="center">Tên Điểm Đến</TableCell>
-                <TableCell align="center">Mô Tả</TableCell>
-                <TableCell align="center">Vị Trí</TableCell>
-                <TableCell align="center">Hình Ảnh</TableCell>
-                <TableCell></TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {destinations.map((destination, index) => (
-                <TableRow key={destination.destinationId}>
-                  <TableCell align="center">
-                    {++index + itemsPerPage * page}
-                  </TableCell>
-                  <TableCell align="center">{destination.name}</TableCell>
-                  <TableCell align="center">
-                    {destination.description}
-                  </TableCell>
-                  <TableCell align="center">{destination.location}</TableCell>
-                  <TableCell align="center">
-                    <img
-                      src={`${API_END_POINT}/image/viewImage/${destination.imageUrl}`}
-                      alt={destination.name}
-                      style={{ width: "100px", height: "auto" }}
-                    />
-                  </TableCell>
-                  <TableCell>
-                    <Stack direction="row" spacing={1}>
-                      <Button
-                        variant="outlined"
-                        color="primary"
-                        onClick={() =>
-                          handleEditDestination(destination.destinationId)
-                        }
-                      >
-                        Sửa
-                      </Button>
-                      <Button
-                        variant="outlined"
-                        color="error"
-                        onClick={() =>
-                          handleDeleteDestination(destination.destinationId)
-                        }
-                      >
-                        Xóa
-                      </Button>
-                    </Stack>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-
+        <DestinationTable
+          destinations={destinations}
+          page={page}
+          itemsPerPage={itemsPerPage}
+          onEdit={(id) => handleEditDestination(id)}
+          onDelete={(id) => handleDeleteDestination(id)}
+        />
         <Pagination
           count={totalPages}
           page={page + 1}
-          onChange={(event, value) => handlePageChange(event, value - 1)}
+          onChange={handlePageChange}
           sx={{ display: "flex", justifyContent: "center", marginTop: 3 }}
         />
       </Container>
+      <ConfirmDelete
+        open={dialogOpen}
+        onConfirm={handleDelete}
+        onCancel={() => setDialogOpen(false)}
+      />
     </>
   );
 }

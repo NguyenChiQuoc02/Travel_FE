@@ -141,7 +141,11 @@ const UserTable: React.FC = () => {
           sx={{ display: "flex", justifyContent: "center", marginTop: 3 }}
         />
       </Container>
-      <ConfirmDelete open={dialogOpen} onConfirm={handleDelete} />
+      <ConfirmDelete
+        open={dialogOpen}
+        onConfirm={handleDelete}
+        onCancel={() => setDialogOpen(false)}
+      />
     </>
   );
 };

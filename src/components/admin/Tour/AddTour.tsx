@@ -18,19 +18,46 @@ import { useMutation } from "@tanstack/react-query";
 import { ChangeTour } from "@/axios/data.type/tour";
 import { Destination } from "@/axios/data.type/destination";
 import ToastMessage from "@/components/shared/Inform/toastMessage";
+import { useForm, Controller } from "react-hook-form";
+import * as yup from "yup";
+import { yupResolver } from "@hookform/resolvers/yup";
+
+const schema = yup.object({
+  name: yup.string().required("Tên Tour không để trống"),
+  price: yup
+    .number()
+    .typeError("Giá Tour phải là một số hợp lệ")
+    .positive("Giá Tour phải lớn hơn 0")
+    .required("Giá Tour là bắt buộc"),
+  startDate: yup.date().required("Ngày bắt đầu là bắt buộc"),
+  endDate: yup
+    .date()
+    .min(yup.ref("startDate"), "Ngày kết thúc không thể sớm hơn ngày bắt đầu")
+    .required("Ngày kết thúc là bắt buộc"),
+  descriptionTour: yup.string(),
+});
 
 export default function CreateTour() {
   const [destinationId, setDestinationId] = useState<number>(1);
   const [destinations, setDestinations] = useState<Destination[]>([]);
   const [toastOpen, setToastOpen] = useState<boolean>(false);
   const [toastMessage, setToastMessage] = useState<string>("");
-  const [tourData, setTourData] = useState({
-    name: "",
-    price: 0,
-    startDate: "",
-    endDate: "",
-    descriptionTour: "",
+
+  const {
+    handleSubmit,
+    control,
+    formState: { errors },
+  } = useForm({
+    resolver: yupResolver(schema),
+    defaultValues: {
+      name: "",
+      price: 0,
+      startDate: undefined,
+      endDate: undefined,
+      descriptionTour: "",
+    },
   });
+
   const router = useRouter();
 
   const handleSelectChange = (event: SelectChangeEvent<string | number>) => {
@@ -41,46 +68,20 @@ export default function CreateTour() {
     router.push("/admin/tour");
   };
 
-  const { mutate, error, data, reset } = useMutation({
+  const { mutate } = useMutation({
     mutationFn: (body: ChangeTour) => {
       return tourService.createTour(body, destinationId);
     },
   });
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setTourData({
-      ...tourData,
-      [e.target.name]: e.target.value,
-    });
-    if (data || error) {
-      reset();
-    }
-  };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+  const onSubmit = (data: any) => {
+    const formattedData = {
+      ...data,
+      startDate: new Date(data.startDate),
+      endDate: new Date(data.endDate),
+    };
 
-    if (!tourData.name.trim()) {
-      setToastMessage("Tên Tour không để trống");
-      setToastOpen(true);
-      return;
-    }
-    if (tourData.price <= 0) {
-      setToastMessage("Giá Tour phải lớn hơn 0.");
-      setToastOpen(true);
-      return;
-    }
-    if (!tourData.startDate || !tourData.endDate) {
-      setToastMessage("Ngày bắt đầu và ngày kết thúc là bắt buộc.");
-      setToastOpen(true);
-      return;
-    }
-    if (new Date(tourData.startDate) > new Date(tourData.endDate)) {
-      setToastMessage("Ngày kết thúc không thể sớm hơn ngày bắt đầu.");
-      setToastOpen(true);
-      return;
-    }
-
-    mutate(tourData, {
+    mutate(formattedData, {
       onSuccess: () => {
         setToastMessage("Thêm tour thành công!");
         setToastOpen(true);
@@ -117,48 +118,73 @@ export default function CreateTour() {
         <Typography variant="h4" align="center" gutterBottom>
           Tạo Tour Mới
         </Typography>
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit(onSubmit)}>
           <Stack spacing={2}>
-            <TextField
-              label="Tên Tour"
+            <Controller
               name="name"
-              value={tourData.name}
-              onChange={handleChange}
+              control={control}
+              render={({ field }) => (
+                <TextField
+                  label="Tên Tour"
+                  {...field}
+                  error={!!errors.name}
+                  helperText={errors.name?.message}
+                />
+              )}
             />
-            <TextField
-              label="Giá Tour (VND)"
+            <Controller
               name="price"
-              type="number"
-              value={tourData.price}
-              onChange={handleChange}
+              control={control}
+              render={({ field }) => (
+                <TextField
+                  label="Giá Tour (VND)"
+                  type="number"
+                  {...field}
+                  value={field.value || ""}
+                  error={!!errors.price}
+                  helperText={errors.price?.message}
+                />
+              )}
             />
-            <TextField
-              label="Ngày Bắt Đầu"
+            <Controller
               name="startDate"
-              type="date"
-              value={tourData.startDate}
-              onChange={handleChange}
-              InputLabelProps={{
-                shrink: true,
-              }}
+              control={control}
+              render={({ field }) => (
+                <TextField
+                  label="Ngày Bắt Đầu"
+                  type="date"
+                  {...field}
+                  value={field.value || ""}
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                  error={!!errors.startDate}
+                  helperText={errors.startDate?.message}
+                />
+              )}
             />
-            <TextField
-              label="Ngày Kết Thúc"
+            <Controller
               name="endDate"
-              type="date"
-              value={tourData.endDate}
-              onChange={handleChange}
-              InputLabelProps={{
-                shrink: true,
-              }}
+              control={control}
+              render={({ field }) => (
+                <TextField
+                  label="Ngày Kết Thúc"
+                  type="date"
+                  {...field}
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                  error={!!errors.endDate}
+                  helperText={errors.endDate?.message}
+                />
+              )}
             />
-            <TextField
-              label="Mô Tả Tour"
+            <Controller
               name="descriptionTour"
-              value={tourData.descriptionTour}
-              onChange={handleChange}
-              multiline
-              rows={4}
+              control={control}
+              render={({ field }) => (
+                <TextField label="Mô Tả Tour" {...field} multiline rows={4} />
+              )}
             />
             <Box sx={{ minWidth: 120 }}>
               <FormControl fullWidth>
